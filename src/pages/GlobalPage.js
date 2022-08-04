@@ -91,7 +91,7 @@ function GlobalPage() {
                       </RowBetween>
                       <RowBetween align="flex-end">
                         <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>
-                          {oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : '-'}
+                          {oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD / 10 ** 9, true) : '-'}
                         </TYPE.main>
                         <TYPE.main fontSize={12}>{volumeChangeUSD ? formattedPercent(volumeChangeUSD) : '-'}</TYPE.main>
                       </RowBetween>
@@ -103,7 +103,7 @@ function GlobalPage() {
                       </RowBetween>
                       <RowBetween align="flex-end">
                         <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>
-                          {totalLiquidityUSD ? formattedNum(totalLiquidityUSD, true) : '-'}
+                          {totalLiquidityUSD ? formattedNum(totalLiquidityUSD / 10 ** 9, true) : '-'}
                         </TYPE.main>
                         <TYPE.main fontSize={12}>
                           {liquidityChangeUSD ? formattedPercent(liquidityChangeUSD) : '-'}

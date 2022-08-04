@@ -128,7 +128,7 @@ const FIELD_TO_VALUE = (field, useTracked) => {
 }
 
 const formatDataText = (value, trackedValue, supressWarning = false) => {
-  const showUntracked = value !== '$0' && !trackedValue & !supressWarning
+  const showUntracked = value !== '&0' && !trackedValue & !supressWarning
   return (
     <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
       <div style={{ textAlign: 'right' }}>{value}</div>
@@ -173,7 +173,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
     console.log("pairDatapairData", pairData);
     if (pairData && pairData.token0 && pairData.token1) {
       const liquidity = formattedNum(
-        !!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD,
+        !!pairData.trackedReserveUSD ? pairData.trackedReserveUSD / 10 ** 9 : pairData.reserveUSD / 10 ** 9,
         true
       )
 
@@ -204,12 +204,12 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
 
       const reserve1 = formattedNum(
-        pairData.reserve1 ? pairData.reserve1 : 0,
+        pairData.reserve1 ? pairData.reserve1 / 10 ** 9 : 0,
         true
       )
 
       const reserve0 = formattedNum(
-        pairData.reserve0 ? pairData.reserve0 : 0,
+        pairData.reserve0 ? pairData.reserve0 / 10 ** 9 : 0,
         true
       )
 
@@ -232,10 +232,10 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
               />
             </CustomLink>
           </DataText>
-          <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
-          <DataText area="reserve0">{formatDataText(reserve0, pairData.reserve0)}</DataText>
-          {!below1080 && <DataText area="reserve1">{formatDataText(reserve1, pairData.reserve1)}</DataText>}
-          {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.fees)}</DataText>}
+          <DataText area="liq">{formatDataText(liquidity, (pairData.trackedReserveUSD))}</DataText>
+          <DataText area="reserve0">{formatDataText(reserve0, (pairData.reserve0))}</DataText>
+          {!below1080 && <DataText area="reserve1">{formatDataText(reserve1, (pairData.reserve1))}</DataText>}
+          {!below1080 && <DataText area="fees">{formatDataText(fees, (pairData.fees))}</DataText>}
           {!below1080 && (
             <DataText area="apy">
               {formatDataText(apy, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}

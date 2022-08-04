@@ -144,7 +144,7 @@ function PairPage({ pairAddress, history }) {
   const transactions = usePairTransactions(pairAddress)
   const backgroundColor = useColor(pairAddress)
 
-  const formattedLiquidity = reserveUSD ? formattedNum(reserveUSD, true) : formattedNum(trackedReserveUSD, true)
+  const formattedLiquidity = reserveUSD ? formattedNum(reserveUSD / 10 ** 9, true) : formattedNum(trackedReserveUSD / 10 ** 9, true)
   const usingUntrackedLiquidity = !trackedReserveUSD && !!reserveUSD
   const liquidityChange = formattedPercent(liquidityChangeUSD)
 
@@ -393,7 +393,7 @@ function PairPage({ pairAddress, history }) {
                         <TokenLogo address={token0?.id} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
                           <RowFixed>
-                            {reserve0 ? formattedNum(reserve0) : ''}{' '}
+                            {reserve0 ? formattedNum(reserve0 / 10 ** 9) : ''}{' '}
                             <FormattedName text={token0?.symbol ?? ''} maxCharacters={8} margin={true} />
                           </RowFixed>
                         </TYPE.main>
@@ -404,7 +404,7 @@ function PairPage({ pairAddress, history }) {
                         <TokenLogo address={token1?.id} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
                           <RowFixed>
-                            {reserve1 ? formattedNum(reserve1) : ''}{' '}
+                            {reserve1 ? formattedNum(reserve1 / 10 ** 9) : ''}{' '}
                             <FormattedName text={token1?.symbol ?? ''} maxCharacters={8} margin={true} />
                           </RowFixed>
                         </TYPE.main>

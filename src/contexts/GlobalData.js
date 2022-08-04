@@ -300,6 +300,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
 
       // format the total liquidity in USD
       data.totalLiquidityUSD = data.totalLiquidityETH * ethPrice
+      console.log("data.totalLiquidityUSD", data.totalLiquidityUSD);
       const liquidityChangeUSD = getPercentChange(
         data.totalLiquidityETH * ethPrice,
         oneDayData.totalLiquidityETH * oldEthPrice
@@ -339,12 +340,12 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
   try {
     // console.log("oldestDateToFetch", oldestDateToFetch);
     const date = "1654158705";
-    console.log("date", date);
+    console.log("oldestDateToFetch", oldestDateToFetch);
     while (!allFound) {
       let result = await v2client.query({
         query: GLOBAL_CHART,
         variables: {
-          startTime: oldestDateToFetch,
+          startTime: oldestDateToFetch.toString(),
           skip,
         },
         fetchPolicy: 'cache-first',
@@ -352,13 +353,14 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       console.log("GLOBAL_CHART", result);
       skip += 1000
       data = data.concat(result.data.uniswapdaydatasbydate)
+      console.log("deta", data);
 
       if (result.data.uniswapdaydatasbydate.length < 1000) {
         allFound = true
       }
     }
 
-    if (data) {
+    if (data && data.length != 0) {
       let dayIndexSet = new Set()
       let dayIndexArray = []
       const oneDay = 24 * 60 * 60
@@ -369,12 +371,16 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
         dayIndexSet.add((data[i].date / oneDay).toFixed(0))
         dayIndexArray.push(data[i])
         dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
+        dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSD / 10 ** 9)
+        // dayData.totalLiquidityUSD = parseFloat(dayData.totalLiquidity)
+        // dayData.totalLiquidityUSDValue = parseFloat(dayData.totalLiquidityUSD / 10 ** 9)
       })
 
       // fill in empty days ( there will be no day datas if no trades made that day )
       let timestamp = data[0].date ? data[0].date : oldestDateToFetch
       // console.log("timestamp", timestamp);
       let latestLiquidityUSD = data[0].totalLiquidityUSD
+      // let latestLiquidityUSDValue = data[0].totalLiquidityUSD / 10 ** 9
       let latestDayDats = data[0].mostLiquidTokens
       let index = 1
       while (timestamp < utcEndTime.unix() - oneDay) {
@@ -385,11 +391,14 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
           data.push({
             date: nextDay,
             dailyVolumeUSD: 0,
+            dailyVolumeUSDValue: 0,
             totalLiquidityUSD: latestLiquidityUSD,
+            // totalLiquidityUSDValue: latestLiquidityUSD / 10 ** 9,
             mostLiquidTokens: latestDayDats,
           })
         } else {
           latestLiquidityUSD = dayIndexArray[index].totalLiquidityUSD
+          // latestLiquidityUSDValue = dayIndexArray[index].totalLiquidityUSD / 10 ** 9
           latestDayDats = dayIndexArray[index].mostLiquidTokens
           index = index + 1
         }
@@ -412,6 +421,7 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
         offsetData.map((dayData) => {
           if (dayData[date]) {
             data[i].dailyVolumeUSD = parseFloat(data[i].dailyVolumeUSD) - parseFloat(dayData[date].dailyVolumeUSD)
+            data[i].dailyVolumeUSDValue = parseFloat(data[i].dailyVolumeUSD / 10 ** 9) - parseFloat(dayData[date].dailyVolumeUSD / 10 ** 9)
           }
           return true
         })
@@ -425,6 +435,8 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       weeklyData[startIndexWeekly].date = data[i].date
       weeklyData[startIndexWeekly].weeklyVolumeUSD =
         (weeklyData[startIndexWeekly].weeklyVolumeUSD ?? 0) + data[i].dailyVolumeUSD
+      weeklyData[startIndexWeekly].weeklyVolumeUSDValue =
+        (weeklyData[startIndexWeekly].weeklyVolumeUSD / 10 ** 9 ?? 0) + data[i].dailyVolumeUSD / 10 ** 9
     })
 
     if (!checked) {
@@ -615,7 +627,7 @@ export function useGlobalChartData() {
   const [state, { updateChart }] = useGlobalDataContext()
   const [oldestDateFetch, setOldestDateFetched] = useState()
   const [activeWindow] = useTimeframe()
-  console.log("statestatestate", state);
+  // console.log("statestatestate", state);
   // console.log("state", state);
   const chartDataDaily = state?.chartData?.daily
   const chartDataWeekly = state?.chartData?.weekly

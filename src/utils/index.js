@@ -19,6 +19,7 @@ dayjs.extend(utc)
 export function getTimeframe(timeWindow) {
   const utcEndTime = dayjs.utc()
   // based on window, get starttime
+  console.log("timeWindow", timeWindow);
   let utcStartTime
   switch (timeWindow) {
     case timeframeOptions.WEEK:
@@ -219,6 +220,7 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
   console.log("blocks", blocks);
   console.log("pairAddress", pairAddress);
   // get historical share values with time travel queries
+  // let result;
   let result = await v2client.query({
     query: SHARE_VALUE(pairAddress, blocks),
     fetchPolicy: 'cache-first',

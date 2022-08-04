@@ -36,6 +36,7 @@ const CHART_VIEW = {
 
 const PairReturnsChart = ({ account, position }) => {
   let data = useUserPositionChart(position, account)
+  console.log("datas", data);
 
   const [timeWindow, setTimeWindow] = useTimeframe()
 

@@ -109,6 +109,7 @@ export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
 //   return gql(queryString)
 // }
 export const SHARE_VALUE = (pairAddress, blocks) => {
+  console.log("pairAddresspairAddress", pairAddress);
   let pair = `"${pairAddress}"`
   let queryString = `
     query blocks {
@@ -410,7 +411,7 @@ export const GLOBAL_DATA = (block) => {
 //changed query
 export const GLOBAL_TXNS = gql`
   query transactions {
-    transactions(first: 100) {
+    transactions(first: 1000) {
       mints {
         transactionid
         transactiontimestamp

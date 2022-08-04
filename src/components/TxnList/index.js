@@ -191,12 +191,12 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
           newTxn.hash = mint.transactionid
           newTxn.timestamp = mint.transactiontimestamp
           newTxn.type = TXN_TYPE.ADD
-          newTxn.token0Amount = mint.amount0
-          newTxn.token1Amount = mint.amount1
+          newTxn.token0Amount = mint.amount0 / 10 ** 9
+          newTxn.token1Amount = mint.amount1 / 10 ** 9
           newTxn.account = mint.to
           newTxn.token0Symbol = updateNameData(mint.pair).token0.symbol
           newTxn.token1Symbol = updateNameData(mint.pair).token1.symbol
-          newTxn.amountUSD = mint.amountUSD
+          newTxn.amountUSD = mint.amountUSD / 10 ** 9
           return newTxns.push(newTxn)
         })
       }
@@ -206,12 +206,12 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
           newTxn.hash = burn.transactionid
           newTxn.timestamp = burn.transactiontimestamp
           newTxn.type = TXN_TYPE.REMOVE
-          newTxn.token0Amount = burn.amount0
-          newTxn.token1Amount = burn.amount1
+          newTxn.token0Amount = burn.amount0 / 10 ** 9
+          newTxn.token1Amount = burn.amount1 / 10 ** 9
           newTxn.account = burn.sender
           newTxn.token0Symbol = updateNameData(burn.pair).token0.symbol
           newTxn.token1Symbol = updateNameData(burn.pair).token1.symbol
-          newTxn.amountUSD = burn.amountUSD
+          newTxn.amountUSD = burn.amountUSD / 10 ** 9
           return newTxns.push(newTxn)
         })
       }
@@ -225,20 +225,20 @@ function TxnList({ transactions, symbol0Override, symbol1Override, color }) {
           if (netToken0 < 0) {
             newTxn.token0Symbol = updateNameData(swap.pair).token0.symbol
             newTxn.token1Symbol = updateNameData(swap.pair).token1.symbol
-            newTxn.token0Amount = Math.abs(netToken0)
-            newTxn.token1Amount = Math.abs(netToken1)
+            newTxn.token0Amount = Math.abs(netToken0 / 10 ** 9)
+            newTxn.token1Amount = Math.abs(netToken1 / 10 ** 9)
           } else if (netToken1 < 0) {
             newTxn.token0Symbol = updateNameData(swap.pair).token1.symbol
             newTxn.token1Symbol = updateNameData(swap.pair).token0.symbol
-            newTxn.token0Amount = Math.abs(netToken1)
-            newTxn.token1Amount = Math.abs(netToken0)
+            newTxn.token0Amount = Math.abs(netToken1 / 10 ** 9)
+            newTxn.token1Amount = Math.abs(netToken0 / 10 ** 9)
           }
 
           newTxn.hash = swap.transactionid
           newTxn.timestamp = swap.transactiontimestamp
           newTxn.type = TXN_TYPE.SWAP
 
-          newTxn.amountUSD = swap.amountUSD
+          newTxn.amountUSD = swap.amountUSD / 10 ** 9
           newTxn.account = swap.to
           return newTxns.push(newTxn)
         })

@@ -127,7 +127,7 @@ function LPList({ lps, disbaleLinks, maxItems = 10 }) {
             </RowFixed>
           </CustomLink>
         </DataText>
-        <DataText area="value">{formattedNum(lp.usd, true)}</DataText>
+        <DataText area="value">{formattedNum(lp.usd / 10 ** 9, true)}</DataText>
       </DashGrid>
     )
   }

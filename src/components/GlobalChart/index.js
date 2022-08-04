@@ -81,7 +81,7 @@ const GlobalChart = ({ display }) => {
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingViewChart
             data={dailyData}
-            base={totalLiquidityUSD}
+            base={totalLiquidityUSD / 10 ** 9}
             baseChange={liquidityChangeUSD}
             title="Liquidity"
             field="totalLiquidityUSD"
@@ -97,7 +97,7 @@ const GlobalChart = ({ display }) => {
             base={volumeWindow === VOLUME_WINDOW.WEEKLY ? oneWeekVolume : oneDayVolumeUSD}
             baseChange={volumeWindow === VOLUME_WINDOW.WEEKLY ? weeklyVolumeChange : volumeChangeUSD}
             title={volumeWindow === VOLUME_WINDOW.WEEKLY ? 'Volume (7d)' : 'Volume'}
-            field={volumeWindow === VOLUME_WINDOW.WEEKLY ? 'weeklyVolumeUSD' : 'dailyVolumeUSD'}
+            field={volumeWindow === VOLUME_WINDOW.WEEKLY ? 'weeklyVolumeUSDValue' : 'dailyVolumeUSDValue'}
             width={width}
             type={CHART_TYPES.BAR}
             useWeekly={volumeWindow === VOLUME_WINDOW.WEEKLY}

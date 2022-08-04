@@ -342,6 +342,7 @@ const getPairTransactions = async (pairAddress) => {
 
 const getPairChartData = async (pairAddress) => {
   let data = []
+  let data1 = [1000000000]
   const utcEndTime = dayjs.utc()
   let utcStartTime = utcEndTime.subtract(1, 'year').startOf('minute')
   let startTime = utcStartTime.unix() - 1
@@ -360,28 +361,39 @@ const getPairChartData = async (pairAddress) => {
         fetchPolicy: 'cache-first',
       })
       console.log("PAIR_CHART", result);
+      for (let index = 0; index < result.data.pairdaydatasbypairAddress.length; index++) {
+        result.data.pairdaydatasbypairAddress[index].reserveUSDValue = result.data.pairdaydatasbypairAddress[index].reserveUSD / 10 ** 9;
+        result.data.pairdaydatasbypairAddress[index].dailyVolumeUSDValue = result.data.pairdaydatasbypairAddress[index].dailyVolumeUSD / 10 ** 9;
+      }
+
       skip += 1000
       data = data.concat(result.data.pairdaydatasbypairAddress)
       if (result.data.pairdaydatasbypairAddress.length < 1000) {
         allFound = true
       }
+      console.log("data1", data1);
     }
 
     let dayIndexSet = new Set()
     let dayIndexArray = []
     const oneDay = 24 * 60 * 60
     data.forEach((dayData, i) => {
+      console.log("dayData.reserveUSD", dayData);
+      console.log("data[i]", data[i]);
       // add the day index to the set of days
       dayIndexSet.add((data[i].date / oneDay).toFixed(0))
       dayIndexArray.push(data[i])
       dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
+      dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSDValue)
       dayData.reserveUSD = parseFloat(dayData.reserveUSD)
+      dayData.reserveUSDValue = parseFloat(dayData.reserveUSDValue)
     })
 
     if (data[0]) {
       // fill in empty days
       let timestamp = data[0].date ? data[0].date : startTime
       let latestLiquidityUSD = data[0].reserveUSD
+      let latestLiquidityUSDValue = data[0].reserveUSD / 10 ** 9
       let index = 1
       while (timestamp < utcEndTime.unix() - oneDay) {
         const nextDay = timestamp + oneDay
@@ -391,10 +403,13 @@ const getPairChartData = async (pairAddress) => {
             date: nextDay,
             dayString: nextDay,
             dailyVolumeUSD: 0,
+            dailyVolumeUSDValue: 0,
             reserveUSD: latestLiquidityUSD,
+            reserveUSDValue: latestLiquidityUSDValue
           })
         } else {
           latestLiquidityUSD = dayIndexArray[index].reserveUSD
+          latestLiquidityUSDValue = dayIndexArray[index].reserveUSD / 10 ** 9
           index = index + 1
         }
         timestamp = nextDay
@@ -511,8 +526,10 @@ export function Updater() {
 }
 
 export function useHourlyRateData(pairAddress, timeWindow) {
+  // console.log("timeWindow", timeWindow);
   const [state, { updateHourlyData }] = usePairDataContext()
   const chartData = state?.[pairAddress]?.hourlyData?.[timeWindow]
+  // console.log("stats", state);
   const [latestBlock] = useLatestBlocks()
 
   useEffect(() => {
@@ -655,6 +672,6 @@ export function usePairChartData(pairAddress) {
  */
 export function useAllPairData() {
   const [state] = usePairDataContext()
-  console.log("state1", state);
+  // console.log("state1", state);
   return state || {}
 }

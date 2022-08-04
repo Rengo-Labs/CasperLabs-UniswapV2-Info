@@ -203,8 +203,8 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
               <FormattedName text={item.symbol} maxCharacters={5} />
             </DataText>
           )}
-          <DataText area="liq">{formattedNum(item.totalLiquidityUSD, true)}</DataText>
-          <DataText area="vol">{formattedNum(item.tradeVolume, true)}</DataText>
+          <DataText area="liq">{formattedNum(item.totalLiquidityUSD / 10 ** 9, true)}</DataText>
+          <DataText area="vol">{formattedNum(item.tradeVolume / 10 ** 9, true)}</DataText>
           {!below1080 && (
             <DataText area="price" color="text" fontWeight="500">
               {formattedNum(item.priceUSD, true)}
@@ -304,7 +304,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
       <List p={0}>
         {filteredList &&
           filteredList.map((item, index) => {
-            console.log("itemitemitem", item);
+            // console.log("itemitemitem", item);
             return (
               <div key={index}>
                 <ListItem key={index} index={(page - 1) * itemMax + index + 1} item={item} />

@@ -66,7 +66,9 @@ const PairChart = ({ address, color, base0, base1 }) => {
   // get data for pair, and rates
   const pairData = usePairData(address)
   let chartData = usePairChartData(address)
+  console.log("chartData", chartData);
   const hourlyData = useHourlyRateData(address, timeWindow)
+  console.log("hourlyData", hourlyData);
   const hourlyRate0 = hourlyData && hourlyData[0]
   const hourlyRate1 = hourlyData && hourlyData[1]
 
@@ -82,6 +84,8 @@ const PairChart = ({ address, color, base0, base1 }) => {
 
   let utcStartTime = getTimeframe(timeWindow)
   chartData = chartData?.filter((entry) => entry.date >= utcStartTime)
+
+
 
   if (chartData && chartData.length === 0) {
     return (
@@ -233,7 +237,7 @@ const PairChart = ({ address, color, base0, base1 }) => {
               dot={false}
               type="monotone"
               name={' (USD)'}
-              dataKey={'reserveUSD'}
+              dataKey={'reserveUSDValue'}
               yAxisId={0}
               stroke={darken(0.12, color)}
               fill="url(#colorUv)"
@@ -319,7 +323,7 @@ const PairChart = ({ address, color, base0, base1 }) => {
             <Bar
               type="monotone"
               name={'Volume'}
-              dataKey={'dailyVolumeUSD'}
+              dataKey={'dailyVolumeUSDValue'}
               fill={color}
               opacity={'0.4'}
               yAxisId={0}

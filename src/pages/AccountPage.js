@@ -144,7 +144,7 @@ function AccountPage({ account }) {
       }, 0)
       : null
   }, [dynamicPositions])
-
+  console.log("positionValue", positionValue);
   useEffect(() => {
     window.scrollTo({
       behavior: 'smooth',
@@ -229,6 +229,7 @@ function AccountPage({ account }) {
                           <MenuRow
                             onClick={() => {
                               setActivePosition(p)
+                              console.log("activePosition", p);
                               setShowDropdown(false)
                             }}
                             key={i}

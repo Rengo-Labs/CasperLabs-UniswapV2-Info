@@ -120,6 +120,7 @@ function TokenPage({ address, history }) {
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
   }, [])
+  console.log("oneDayTxns", oneDayTxns);
 
   // detect color from token
   const backgroundColor = useColor(id, symbol)
@@ -137,13 +138,14 @@ function TokenPage({ address, history }) {
   const priceChange = priceChangeUSD ? formattedPercent(priceChangeUSD) : ''
 
   // volume
-  const volume = formattedNum(!!oneDayVolumeUSD ? oneDayVolumeUSD : oneDayVolumeUT, true)
+  console.log("oneDayVolumeUSD", oneDayVolumeUSD);
+  const volume = formattedNum(!!oneDayVolumeUSD ? oneDayVolumeUSD / 10 ** 9 : oneDayVolumeUT / 10 ** 9, true)
 
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUT
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUT)
 
   // liquidity
-  const liquidity = formattedNum(totalLiquidityUSD, true)
+  const liquidity = formattedNum(totalLiquidityUSD / 10 ** 9, true)
   const liquidityChange = formattedPercent(liquidityChangeUSD)
 
   // transactions

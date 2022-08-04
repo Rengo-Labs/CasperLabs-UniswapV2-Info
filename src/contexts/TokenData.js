@@ -226,8 +226,8 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
   const utcCurrentTime = dayjs()
   const utcOneDayBack = utcCurrentTime.subtract(1, 'day').unix()
   const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').unix()
-  // let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
-  // let twoDayBlock = await getBlockFromTimestamp(utcTwoDaysBack)
+  let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
+  let twoDayBlock = await getBlockFromTimestamp(utcTwoDaysBack)
 
   try {
     // need to get the top tokens by liquidity by need token day datas
@@ -245,7 +245,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
     let tokenids2 = await v2client.query({
       query: TOKEN_TOP_DAY_DATAS,
       fetchPolicy: 'network-only',
-      variables: { date: currentDate },
+      variables: { date: currentDate.toString() },
     })
 
     // console.log("tokenids", tokenids);
@@ -273,13 +273,13 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
     })
     console.log("Current", current2);
     let oneDayResult = await v2client.query({
-      query: TOKENS_HISTORICAL_BULK(ids2),
+      query: TOKENS_HISTORICAL_BULK(ids2, oneDayBlock),
       fetchPolicy: 'cache-first',
     })
     console.log("oneDayResult", oneDayResult);
 
     let twoDayResult = await v2client.query({
-      query: TOKENS_HISTORICAL_BULK(ids2),
+      query: TOKENS_HISTORICAL_BULK(ids2, twoDayBlock),
       fetchPolicy: 'cache-first',
     })
     console.log("twoDayResult", twoDayResult);
@@ -327,6 +327,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
           oneDayHistory?.tradeVolumeUSD ?? 0,
           twoDayHistory?.tradeVolumeUSD ?? 0
         )
+        console.log("oneDayVolumeUSDoneDayVolumeUSD", oneDayVolumeUSD);
         const [oneDayTxns, txnChange] = get2DayPercentChange(
           data.txCount,
           oneDayHistory?.txCount ?? 0,
@@ -652,10 +653,18 @@ const getTokenChartData = async (tokenAddress) => {
         },
         fetchPolicy: 'cache-first',
       })
-      // console.log("token_chart", result);
+      console.log("token_chart", result);
       if (result.data.tokendaydatas.length < 1000) {
         allFound = true
       }
+      for (let index = 0; index < result.data.tokendaydatas.length; index++) {
+        result.data.tokendaydatas[index].reserveUSDValue = result.data.tokendaydatas[index].reserveUSD / 10 ** 9;
+        result.data.tokendaydatas[index].dailyVolumeUSDValue = result.data.tokendaydatas[index].dailyVolumeUSD / 10 ** 9;
+        result.data.tokendaydatas[index].totalLiquidityUSDValue = result.data.tokendaydatas[index].totalLiquidityUSD / 10 ** 9;
+        result.data.tokendaydatas[index].totalLiquidityTokenValue = result.data.tokendaydatas[index].totalLiquidityToken / 10 ** 9;
+
+      }
+
       skip += 1000
       data = data.concat(result.data.tokendaydatas)
     }
@@ -668,11 +677,13 @@ const getTokenChartData = async (tokenAddress) => {
       dayIndexSet.add((data[i].date / oneDay).toFixed(0))
       dayIndexArray.push(data[i])
       dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
+      dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSDValue)
     })
 
     // fill in empty days
     let timestamp = data[0] && data[0].date ? data[0].date : startTime
     let latestLiquidityUSD = data[0] && data[0].totalLiquidityUSD
+    let latestLiquidityUSDValue = data[0] && data[0].totalLiquidityUSD / 10 ** 9
     let latestPriceUSD = data[0] && data[0].priceUSD
     let latestPairDatas = data[0] && data[0].mostLiquidPairs
     let index = 1
@@ -684,12 +695,15 @@ const getTokenChartData = async (tokenAddress) => {
           date: nextDay,
           dayString: nextDay,
           dailyVolumeUSD: 0,
+          dailyVolumeUSDValue: 0,
           priceUSD: latestPriceUSD,
           totalLiquidityUSD: latestLiquidityUSD,
+          totalLiquidityUSDValue: latestLiquidityUSDValue,
           mostLiquidPairs: latestPairDatas,
         })
       } else {
         latestLiquidityUSD = dayIndexArray[index].totalLiquidityUSD
+        latestLiquidityUSDValue = dayIndexArray[index].totalLiquidityUSD / 10 ** 9
         latestPriceUSD = dayIndexArray[index].priceUSD
         latestPairDatas = dayIndexArray[index].mostLiquidPairs
         index = index + 1
@@ -726,7 +740,7 @@ export function useTokenData(tokenAddress) {
     if (!tokenData && ethPrice && ethPriceOld
       // && isAddress(tokenAddress)
     ) {
-      console.log("tokenAddresstokenAddress", tokenAddress);
+      // console.log("tokenAddresstokenAddress", tokenAddress);
       getTokenData(tokenAddress, ethPrice, ethPriceOld).then((data) => {
         update(tokenAddress, data)
       })
@@ -917,7 +931,7 @@ export function useTokenPriceData(tokenAddress, timeWindow, interval = 3600) {
 
 export function useAllTokenData() {
   const [state] = useTokenDataContext()
-  console.log("state", state);
+  console.log("stete", state);
 
   // filter out for only addresses
   return Object.keys(state)
