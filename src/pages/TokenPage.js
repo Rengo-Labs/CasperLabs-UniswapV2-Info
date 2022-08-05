@@ -120,7 +120,7 @@ function TokenPage({ address, history }) {
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
   }, [])
-  console.log("oneDayTxns", oneDayTxns);
+  // console.log("oneDayTxns", oneDayTxns);
 
   // detect color from token
   const backgroundColor = useColor(id, symbol)

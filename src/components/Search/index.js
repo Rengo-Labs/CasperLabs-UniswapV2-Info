@@ -184,8 +184,8 @@ export const Search = ({ small = false }) => {
     async function fetchData() {
       try {
         if (value?.length > 0) {
-          console.log("value ? value.toUpperCase() : ''", value ? value.toUpperCase() : '');
-          console.log("value", value);
+          // console.log("value ? value.toUpperCase() : ''", value ? value.toUpperCase() : '');
+          // console.log("value", value);
           let tokens = await v2client.query({
             query: TOKEN_SEARCH,
             variables: {

@@ -300,7 +300,6 @@ async function getGlobalData(ethPrice, oldEthPrice) {
 
       // format the total liquidity in USD
       data.totalLiquidityUSD = data.totalLiquidityETH * ethPrice
-      console.log("data.totalLiquidityUSD", data.totalLiquidityUSD);
       const liquidityChangeUSD = getPercentChange(
         data.totalLiquidityETH * ethPrice,
         oneDayData.totalLiquidityETH * oldEthPrice
@@ -340,7 +339,7 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
   try {
     // console.log("oldestDateToFetch", oldestDateToFetch);
     const date = "1654158705";
-    console.log("oldestDateToFetch", oldestDateToFetch);
+    // console.log("oldestDateToFetch", oldestDateToFetch);
     while (!allFound) {
       let result = await v2client.query({
         query: GLOBAL_CHART,
@@ -372,15 +371,12 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
         dayIndexArray.push(data[i])
         dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
         dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSD / 10 ** 9)
-        // dayData.totalLiquidityUSD = parseFloat(dayData.totalLiquidity)
-        // dayData.totalLiquidityUSDValue = parseFloat(dayData.totalLiquidityUSD / 10 ** 9)
       })
 
       // fill in empty days ( there will be no day datas if no trades made that day )
       let timestamp = data[0].date ? data[0].date : oldestDateToFetch
       // console.log("timestamp", timestamp);
       let latestLiquidityUSD = data[0].totalLiquidityUSD
-      // let latestLiquidityUSDValue = data[0].totalLiquidityUSD / 10 ** 9
       let latestDayDats = data[0].mostLiquidTokens
       let index = 1
       while (timestamp < utcEndTime.unix() - oneDay) {
@@ -393,12 +389,11 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
             dailyVolumeUSD: 0,
             dailyVolumeUSDValue: 0,
             totalLiquidityUSD: latestLiquidityUSD,
-            // totalLiquidityUSDValue: latestLiquidityUSDValue,
+            totalLiquidityUSDValue: latestLiquidityUSD / 10 ** 9,
             mostLiquidTokens: latestDayDats,
           })
         } else {
           latestLiquidityUSD = dayIndexArray[index].totalLiquidityUSD
-          // latestLiquidityUSDValue = dayIndexArray[index].totalLiquidityUSD / 10 ** 9
           latestDayDats = dayIndexArray[index].mostLiquidTokens
           index = index + 1
         }
@@ -419,11 +414,10 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       offsetData &&
         !checked &&
         offsetData.map((dayData) => {
-          console.log("dayData[date].dailyVolumeUSD", dayData[date].dailyVolumeUSD);
-          console.log("data[i].dailyVolumeUSD", data[i].dailyVolumeUSD);
+          // console.log("dayData[date].dailyVolumeUSD", dayData[date].dailyVolumeUSD);
+          // console.log("data[i].dailyVolumeUSD", data[i].dailyVolumeUSD);
           if (dayData[date]) {
             data[i].dailyVolumeUSD = parseFloat(data[i].dailyVolumeUSD) - parseFloat(dayData[date].dailyVolumeUSD)
-            // data[i].dailyVolumeUSD = parseFloat(data[i].dailyVolumeUSD) - parseFloat(dayData[date].dailyVolumeUSD)
             data[i].dailyVolumeUSDValue = parseFloat(data[i].dailyVolumeUSD / 10 ** 9) - parseFloat(dayData[date].dailyVolumeUSD / 10 ** 9)
           }
           return true
@@ -615,7 +609,7 @@ export function useGlobalData() {
       updateAllPairsInUniswap(allPairs)
 
       let allTokens = await getAllTokensOnUniswap()
-      console.log("allTokensallTokens", allTokens);
+      // console.log("allTokensallTokens", allTokens);
       updateAllTokensInUniswap(allTokens)
     }
     if (!data && ethPrice && oldEthPrice) {

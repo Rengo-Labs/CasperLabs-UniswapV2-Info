@@ -29,7 +29,7 @@ const GlobalChart = ({ display }) => {
 
   // global historical data
   const [dailyData, weeklyData] = useGlobalChartData()
-  console.log("dailyData", dailyData);
+  // console.log("dailyData", dailyData);
   const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD, oneWeekVolume, weeklyVolumeChange } =
     useGlobalData()
 
@@ -85,7 +85,7 @@ const GlobalChart = ({ display }) => {
             base={totalLiquidityUSD / 10 ** 9}
             baseChange={liquidityChangeUSD}
             title="Liquidity"
-            field="totalLiquidityUSD"
+            field="totalLiquidityUSDValue"
             width={width}
             type={CHART_TYPES.AREA}
           />

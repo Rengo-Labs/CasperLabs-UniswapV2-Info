@@ -92,7 +92,7 @@ function AccountPage({ account }) {
   // get data for this account
   const transactions = useUserTransactions(account)
   const positions = useUserPositions(account)
-  console.log("positions", positions);
+  // console.log("positions", positions);
   const miningPositions = useMiningPositions(account)
 
   // get data for user stats
@@ -128,7 +128,7 @@ function AccountPage({ account }) {
   const [activePosition, setActivePosition] = useState()
 
   const dynamicPositions = activePosition ? [activePosition] : positions
-  console.log("dynamicPositions", dynamicPositions);
+  // console.log("dynamicPositions", dynamicPositions);
   const aggregateFees = dynamicPositions?.reduce(function (total, position) {
     return total + position.fees.sum
   }, 0)
@@ -144,7 +144,7 @@ function AccountPage({ account }) {
       }, 0)
       : null
   }, [dynamicPositions])
-  console.log("positionValue", positionValue);
+  // console.log("positionValue", positionValue);
   useEffect(() => {
     window.scrollTo({
       behavior: 'smooth',
@@ -229,7 +229,7 @@ function AccountPage({ account }) {
                           <MenuRow
                             onClick={() => {
                               setActivePosition(p)
-                              console.log("activePosition", p);
+                              // console.log("activePosition", p);
                               setShowDropdown(false)
                             }}
                             key={i}
