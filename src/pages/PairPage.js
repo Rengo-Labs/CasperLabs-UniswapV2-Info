@@ -135,8 +135,8 @@ function PairPage({ pairAddress, history }) {
     volumeChangeUntracked,
     liquidityChangeUSD,
   } = usePairData(pairAddress)
-  console.log("reserve0", reserve0);
-  console.log("reserve1", reserve1);
+  // console.log("reserve0", reserve0);
+  // console.log("reserve1", reserve1);
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
   }, [])

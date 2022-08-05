@@ -273,7 +273,7 @@ function AccountPage({ account }) {
                   <RowFixed align="flex-end">
                     <TYPE.header fontSize={'24px'} lineHeight={1}>
                       {positionValue
-                        ? formattedNum(positionValue, true)
+                        ? formattedNum(positionValue / 10 ** 9, true)
                         : positionValue === 0
                           ? formattedNum(0, true)
                           : '-'}
@@ -287,7 +287,7 @@ function AccountPage({ account }) {
                   </RowBetween>
                   <RowFixed align="flex-end">
                     <TYPE.header fontSize={'24px'} lineHeight={1} color={aggregateFees && 'green'}>
-                      {aggregateFees ? formattedNum(aggregateFees, true, true) : '-'}
+                      {aggregateFees ? formattedNum(aggregateFees / 10 ** 9, true, true) : '-'}
                     </TYPE.header>
                   </RowFixed>
                 </AutoColumn>
@@ -353,12 +353,12 @@ function AccountPage({ account }) {
           >
             <AutoRow gap="20px">
               <AutoColumn gap="8px">
-                <TYPE.header fontSize={24}>{totalSwappedUSD ? formattedNum(totalSwappedUSD, true) : '-'}</TYPE.header>
+                <TYPE.header fontSize={24}>{totalSwappedUSD ? formattedNum(totalSwappedUSD / 10 ** 9, true) : '-'}</TYPE.header>
                 <TYPE.main>Total Value Swapped</TYPE.main>
               </AutoColumn>
               <AutoColumn gap="8px">
                 <TYPE.header fontSize={24}>
-                  {totalSwappedUSD ? formattedNum(totalSwappedUSD * 0.003, true) : '-'}
+                  {totalSwappedUSD ? formattedNum(totalSwappedUSD / 10 ** 9 * 0.003, true) : '-'}
                 </TYPE.header>
                 <TYPE.main>Total Fees Paid</TYPE.main>
               </AutoColumn>

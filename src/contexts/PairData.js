@@ -188,7 +188,7 @@ async function getBulkPairData(pairList, ethPrice) {
   //await getBlocksFromTimestamps([t1, t2, tWeek])
 
   try {
-    console.log("pairList", pairList);
+    // console.log("pairList", pairList);
     let current = await v2client.query({
       query: PAIRS_BULK,
       variables: {
@@ -200,7 +200,7 @@ async function getBulkPairData(pairList, ethPrice) {
 
     let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
       [b1, b2, bWeek].map(async (block) => {
-        console.log("blockblock", block);
+        // console.log("blockblock", block);
         let result = await v2client.query({
           query: PAIRS_HISTORICAL_BULK(block, pairList),
           fetchPolicy: 'cache-first',
@@ -319,6 +319,7 @@ function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBl
 }
 
 const getPairTransactions = async (pairAddress) => {
+  // console.log("pairAddress", pairAddress);
   const transactions = {}
 
   try {
@@ -371,15 +372,15 @@ const getPairChartData = async (pairAddress) => {
       if (result.data.pairdaydatasbypairAddress.length < 1000) {
         allFound = true
       }
-      console.log("data1", data1);
+      // console.log("data1", data1);
     }
 
     let dayIndexSet = new Set()
     let dayIndexArray = []
     const oneDay = 24 * 60 * 60
     data.forEach((dayData, i) => {
-      console.log("dayData.reserveUSD", dayData);
-      console.log("data[i]", data[i]);
+      // console.log("dayData.reserveUSD", dayData);
+      // console.log("data[i]", data[i]);
       // add the day index to the set of days
       dayIndexSet.add((data[i].date / oneDay).toFixed(0))
       dayIndexArray.push(data[i])
@@ -509,7 +510,7 @@ export function Updater() {
         fetchPolicy: 'cache-first',
       })
       console.log("PAIRS_CURRENT", pairs);
-      console.log("ethPrice", ethPrice);
+      // console.log("ethPrice", ethPrice);
       // format as array of addresses
       const formattedPairs = pairs.map((pair) => {
         return pair.id
@@ -517,7 +518,7 @@ export function Updater() {
 
       // get data for every pair in list
       let topPairs = await getBulkPairData(formattedPairs, ethPrice)
-      console.log("topPairs", topPairs);
+      // console.log("topPairs", topPairs);
       topPairs && updateTopPairs(topPairs)
     }
     ethPrice && getData()
@@ -575,7 +576,7 @@ export function useDataForList(pairList) {
       let unfetched = []
 
       pairList.map(async (pair) => {
-        console.log("pairpair", pair);
+        // console.log("pairpair", pair);
         let currentData = state?.[pair.id]
         if (!currentData) {
           unfetched.push(pair.id)

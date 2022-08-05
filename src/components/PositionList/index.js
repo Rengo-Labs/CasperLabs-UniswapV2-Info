@@ -139,7 +139,7 @@ function PositionList({ positions }) {
 
   const ListItem = ({ position, index }) => {
     const poolOwnership = position.liquidityTokenBalance / position.pair.totalSupply
-    const valueUSD = poolOwnership * position.pair.reserveUSD
+    const valueUSD = poolOwnership * position.pair.reserveUSD / 10 ** 9
 
     return (
       <DashGrid style={{ opacity: poolOwnership > 0 ? 1 : 0.6 }} focus={true}>
@@ -176,11 +176,11 @@ function PositionList({ positions }) {
         </DataText>
         <DataText area="casperswap">
           <AutoColumn gap="12px" justify="flex-end">
-            <TYPE.main>{formattedNum(valueUSD, true, true)}</TYPE.main>
+            <TYPE.main>{formattedNum(valueUSD / 10 ** 9, true, true)}</TYPE.main>
             <AutoColumn gap="4px" justify="flex-end">
               <RowFixed>
                 <TYPE.small fontWeight={400}>
-                  {formattedNum(poolOwnership * parseFloat(position.pair.reserve0))}{' '}
+                  {formattedNum(poolOwnership * parseFloat(position.pair.reserve0 / 10 ** 9))}{' '}
                 </TYPE.small>
                 <FormattedName
                   text={position.pair.token0.symbol}
@@ -191,7 +191,7 @@ function PositionList({ positions }) {
               </RowFixed>
               <RowFixed>
                 <TYPE.small fontWeight={400}>
-                  {formattedNum(poolOwnership * parseFloat(position.pair.reserve1))}{' '}
+                  {formattedNum(poolOwnership * parseFloat(position.pair.reserve1 / 10 ** 9))}{' '}
                 </TYPE.small>
                 <FormattedName
                   text={position.pair.token1.symbol}
@@ -207,14 +207,14 @@ function PositionList({ positions }) {
           <DataText area="return">
             <AutoColumn gap="12px" justify="flex-end">
               <TYPE.main color={'green'}>
-                <RowFixed>{formattedNum(position?.fees.sum, true, true)}</RowFixed>
+                <RowFixed>{formattedNum(position?.fees.sum / 10 ** 9, true, true)}</RowFixed>
               </TYPE.main>
               <AutoColumn gap="4px" justify="flex-end">
                 <RowFixed>
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token0.derivedETH)
                       ? formattedNum(
-                        position?.fees.sum / (parseFloat(position.pair.token0.derivedETH) * ethPrice) / 2,
+                        position?.fees.sum / (parseFloat(position.pair.token0.derivedETH / 10 ** 9) * ethPrice) / 2,
                         false,
                         true
                       )
@@ -231,7 +231,7 @@ function PositionList({ positions }) {
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token1.derivedETH)
                       ? formattedNum(
-                        position?.fees.sum / (parseFloat(position.pair.token1.derivedETH) * ethPrice) / 2,
+                        position?.fees.sum / (parseFloat(position.pair.token1.derivedETH / 10 ** 9) * ethPrice) / 2,
                         false,
                         true
                       )

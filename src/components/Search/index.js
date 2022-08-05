@@ -184,6 +184,8 @@ export const Search = ({ small = false }) => {
     async function fetchData() {
       try {
         if (value?.length > 0) {
+          console.log("value ? value.toUpperCase() : ''", value ? value.toUpperCase() : '');
+          console.log("value", value);
           let tokens = await v2client.query({
             query: TOKEN_SEARCH,
             variables: {
@@ -191,7 +193,7 @@ export const Search = ({ small = false }) => {
               id: value,
             },
           })
-          // console.log("tokens", tokens);
+          // console.log("tokenstokenstokenstokenstokens", tokens);
           let pairs = await v2client.query({
             query: PAIR_SEARCH,
             variables: {
@@ -199,13 +201,15 @@ export const Search = ({ small = false }) => {
               id: value,
             },
           })
-
+          // console.log("pairspairspairs", pairs);
+          // console.log("searchedPair", searchedPairs);
           setSearchedPairs(
             updateNameData(pairs.data.as0)
               .concat(updateNameData(pairs.data.as1))
               .concat(updateNameData(pairs.data.asAddress))
           )
-          const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress).concat(tokens.data.asName)
+          const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress != null ? tokens.data.asAddress : []).concat(tokens.data.asName)
+          // console.log("foundTokens", foundTokens);
           setSearchedTokens(foundTokens)
         }
       } catch (e) {

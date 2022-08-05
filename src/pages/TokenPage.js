@@ -138,7 +138,7 @@ function TokenPage({ address, history }) {
   const priceChange = priceChangeUSD ? formattedPercent(priceChangeUSD) : ''
 
   // volume
-  console.log("oneDayVolumeUSD", oneDayVolumeUSD);
+  // console.log("oneDayVolumeUSD", oneDayVolumeUSD);
   const volume = formattedNum(!!oneDayVolumeUSD ? oneDayVolumeUSD / 10 ** 9 : oneDayVolumeUT / 10 ** 9, true)
 
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUT

@@ -109,7 +109,7 @@ export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
 //   return gql(queryString)
 // }
 export const SHARE_VALUE = (pairAddress, blocks) => {
-  console.log("pairAddresspairAddress", pairAddress);
+  // console.log("pairAddresspairAddress", pairAddress);
   let pair = `"${pairAddress}"`
   let queryString = `
     query blocks {
@@ -489,7 +489,7 @@ export const ALL_TOKENS = gql`
 //changed query
 //orderBy: totalLiquidity, orderDirection: desc
 export const TOKEN_SEARCH = gql`
-  query tokens($value: String!, $id: String!) {
+  query ($value: String!, $id: String!) {
     asSymbol: tokensbysymbol(symbol: $value) {
       id
       symbol
@@ -502,7 +502,7 @@ export const TOKEN_SEARCH = gql`
       name
       totalLiquidity
     }
-    asAddress: tokenbyid(id: $id) {
+    asAddress: tokenbyId(id: $id) {
       id
       symbol
       name
@@ -513,7 +513,7 @@ export const TOKEN_SEARCH = gql`
 //Ok
 //changed query
 export const PAIR_SEARCH = gql`
-  query pairs($tokens: [String]!, $id: String) {
+  query ($tokens: [String]!, $id: String) {
     as0: pairsbytoken0array(token0: $tokens) {
       id
       token0 {
@@ -540,7 +540,7 @@ export const PAIR_SEARCH = gql`
         name
       }
     }
-    asAddress: pairbyid(id: $id) {
+    asAddress: pairbyId(id: $id) {
       id
       token0 {
         id
@@ -719,7 +719,7 @@ export const TOKEN_TOP_DAY_DATAS = gql`
 //Ok
 //changed query
 export const TOKENS_HISTORICAL_BULK = (tokens, block) => {
-  console.log("tokenstokenstokens", tokens);
+  // console.log("tokenstokenstokens", tokens);
   let tokenString = `[`
   tokens.map((token) => {
     return (tokenString += `"${token}",`)
@@ -747,24 +747,44 @@ export const TOKENS_HISTORICAL_BULK = (tokens, block) => {
 //Ok
 //orderBy: reserveUSD, orderDirection: desc
 //changed query
+// export const TOKEN_DATA = (tokenAddress, block) => {
+//   console.log("tokenAddress", tokenAddress);
+//   const queryString = `
+//     ${TokenFields}
+//     query tokens {
+//       tokenbyId(id:"${tokenAddress}") {
+//         ...TokenFields
+//       }
+//       pairs0: pairsbytoken0(first: 50,token0: "${tokenAddress}"){
+//         id
+//       }
+//       pairs1: pairsbytoken1(first: 50,token1: "${tokenAddress}"){
+//         id
+//       }
+//     }
+//   `
+//   return gql(queryString)
+// }
+
 export const TOKEN_DATA = (tokenAddress, block) => {
-  console.log("tokenAddress", tokenAddress);
   const queryString = `
     ${TokenFields}
-    query tokens {
+    query {
       tokenbyId(id:"${tokenAddress}") {
         ...TokenFields
       }
-      pairs0: pairsbytoken0(first: 50,token0: "${tokenAddress}"){
+      pairs0: pairsbytoken0(first: 50, token0: "${tokenAddress}"){
         id
       }
-      pairs1: pairsbytoken1(first: 50,token1: "${tokenAddress}"){
+      pairs1: pairsbytoken1(first: 50, token1: "${tokenAddress}"){
         id
       }
     }
   `
   return gql(queryString)
 }
+
+
 
 //orderBy: timestamp, orderDirection: desc
 //changed query

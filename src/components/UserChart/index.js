@@ -119,7 +119,7 @@ const UserChart = ({ account }) => {
             />
             <Area
               key={'other'}
-              dataKey={'valueUSD'}
+              dataKey={'valueUSDValue'}
               stackId="2"
               strokeWidth={2}
               dot={false}

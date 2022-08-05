@@ -251,23 +251,23 @@ export function useUserPositionChart(position, account) {
   const [state, { updateUserPairReturns }] = useUserContext()
 
   // get oldest date of data to fetch
-  // const startDateTimestamp = useStartTimestamp()
-  const startDateTimestamp = 1637232662;
+  const startDateTimestamp = useStartTimestamp()
+  // const startDateTimestamp = 1637232662;
 
   // get users adds and removes on this pair
   const snapshots = useUserSnapshots(account)
-  console.log("snapshots", snapshots);
-  console.log("position", position);
+  // console.log("snapshots", snapshots);
+  // console.log("positioned", position);
   const pairSnapshots =
     snapshots &&
     position &&
     snapshots.filter((currentSnapshot) => {
       return currentSnapshot.pair.id === position.pair.id
     })
-  console.log("pairSnapshots", pairSnapshots);
+  // console.log("pairSnapshots", pairSnapshots);
   // get data needed for calculations
   const currentPairData = usePairData(pairAddress)
-  console.log("currentPairData", currentPairData);
+  // console.log("currentPairData", currentPairData);
   const [currentETHPrice] = useCsprPrice()
 
   // formatetd array to return for chart data
@@ -281,7 +281,7 @@ export function useUserPositionChart(position, account) {
         pairSnapshots,
         currentETHPrice
       )
-      console.log("fetchedData", fetchedData);
+      // console.log("fetchedData", fetchedData);
       updateUserPairReturns(account, pairAddress, fetchedData)
     }
     if (
@@ -366,18 +366,20 @@ export function useUserLiquidityChart(account) {
         dayTimestamps.push(parseInt(dayIndex) * 86400)
         dayIndex = dayIndex + 1
       }
-
+      // console.log("historyhistory", history);
       const pairs = history.reduce((pairList, position) => {
         return [...pairList, position.pair.id]
       }, [])
 
       // get all day datas where date is in this list, and pair is in pair list
+      // console.log("startDateTimestamp", startDateTimestamp);
+      // console.log("pairs", pairs);
       let {
         data: { pairdaydatas },
       } = await v2client.query({
-        query: PAIR_DAY_DATA_BULK(pairs, "1637234132"),
+        query: PAIR_DAY_DATA_BULK(pairs, startDateTimestamp),
       })
-      console.log("pairdaydatas", pairdaydatas);
+      console.log("PAIR_DAY_DATA_BULK", pairdaydatas);
       const formattedHistory = []
 
       // map of current pair => ownership %
@@ -407,7 +409,7 @@ export function useUserLiquidityChart(account) {
             }
           }
         }
-
+        // console.log("ownershipPerPair", ownershipPerPair);
         const relavantDayDatas = Object.keys(ownershipPerPair).map((pairAddress) => {
           // find last day data after timestamp update
           const dayDatasForThisPair = pairdaydatas.filter((dayData) => {
@@ -425,6 +427,7 @@ export function useUserLiquidityChart(account) {
         })
 
         // now cycle through pair day datas, for each one find usd value = ownership[address] * reserveUSD
+        // console.log("relavantDayDatas", relavantDayDatas);
         const dailyUSD = relavantDayDatas.reduce((totalUSD, dayData) => {
           if (dayData) {
             return (totalUSD =
@@ -437,10 +440,11 @@ export function useUserLiquidityChart(account) {
             return totalUSD
           }
         }, 0)
-
+        // console.log("dailyUSD", dailyUSD);
         formattedHistory.push({
           date: dayTimestamp,
           valueUSD: dailyUSD,
+          valueUSDValue: dailyUSD / 10 ** 9,
         })
       }
 
@@ -457,7 +461,7 @@ export function useUserLiquidityChart(account) {
 export function useUserPositions(account) {
   const [state, { updatePositions }] = useUserContext()
   const positions = state?.[account]?.[POSITIONS_KEY]
-
+  // console.log("accountaccount", account);
   const snapshots = useUserSnapshots(account)
   const [ethPrice] = useCsprPrice()
 
@@ -476,7 +480,7 @@ export function useUserPositions(account) {
           let formattedPositions = await Promise.all(
             result?.data?.liquidityPositionsagainstuserId.map(async (positionData) => {
               const returnData = await getLPReturnsOnPair(account, positionData.pair, ethPrice, snapshots)
-              console.log("returnData", returnData);
+              // console.log("returnData", returnData);
               return {
                 ...positionData,
                 ...returnData,

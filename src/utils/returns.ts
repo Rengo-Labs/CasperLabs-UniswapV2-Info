@@ -31,6 +31,8 @@ interface Position {
 const PRICE_DISCOVERY_START_TIMESTAMP = 1589747086
 
 function formatPricesForEarlyTimestamps(position): Position {
+  // console.log("priceOverrides", priceOverrides);
+
   if (position.timestamp < PRICE_DISCOVERY_START_TIMESTAMP) {
     if (priceOverrides.includes(position?.pair?.token0.id)) {
       position.token0PriceUSD = 1
@@ -109,23 +111,23 @@ async function getPrincipalForUserPerPair(user: string, pairAddress: string) {
 export function getMetricsForPositionWindow(positionT0: Position, positionT1: Position): ReturnMetrics {
   positionT0 = formatPricesForEarlyTimestamps(positionT0)
   positionT1 = formatPricesForEarlyTimestamps(positionT1)
-  console.log("positionT0", positionT0);
-  console.log("positionT1", positionT1);
+  // console.log("positionT0", positionT0);
+  // console.log("positionT1", positionT1);
   // calculate ownership at ends of window, for end of window we need original LP token balance / new total supply
   const t0Ownership = positionT0.liquidityTokenBalance / positionT0.liquidityTokenTotalSupply
   const t1Ownership = positionT0.liquidityTokenBalance / positionT1.liquidityTokenTotalSupply
-  console.log("t0Ownership", t0Ownership);
-  console.log("t1Ownership", t1Ownership);
+  // console.log("t0Ownership", t0Ownership);
+  // console.log("t1Ownership", t1Ownership);
   // get starting amounts of token0 and token1 deposited by LP
   const token0_amount_t0 = t0Ownership * positionT0.reserve0
   const token1_amount_t0 = t0Ownership * positionT0.reserve1
-  console.log("token0_amount_t0", token0_amount_t0);
-  console.log("token0_amount_t0", token1_amount_t0);
+  // console.log("token0_amount_t0", token0_amount_t0);
+  // console.log("token0_amount_t0", token1_amount_t0);
   // get current token values
   const token0_amount_t1 = t1Ownership * positionT1.reserve0
   const token1_amount_t1 = t1Ownership * positionT1.reserve1
-  console.log("token0_amount_t1", token0_amount_t1);
-  console.log("token0_amount_t1", token1_amount_t1);
+  // console.log("token0_amount_t1", token0_amount_t1);
+  // console.log("token0_amount_t1", token1_amount_t1);
   // calculate squares to find imp loss and fee differences
   const sqrK_t0 = Math.sqrt(token0_amount_t0 * token1_amount_t0)
   // eslint-disable-next-line eqeqeq
@@ -141,6 +143,8 @@ export function getMetricsForPositionWindow(positionT0: Position, positionT1: Po
   const difference_fees_token1 = token1_amount_t1 - token1_amount_no_fees
   const difference_fees_usd =
     difference_fees_token0 * positionT1.token0PriceUSD + difference_fees_token1 * positionT1.token1PriceUSD
+  // console.log("difference_fees_token0", difference_fees_token0);
+  // console.log("difference_fees_token1", difference_fees_token1);
 
   // calculate USD value at t0 and t1 using initial token deposit amounts for asset return
   const assetValueT0 = token0_amount_t0 * positionT0.token0PriceUSD + token1_amount_t0 * positionT0.token1PriceUSD
@@ -171,27 +175,27 @@ export function getMetricsForPositionWindow(positionT0: Position, positionT1: Po
  */
 export async function getHistoricalPairReturns(startDateTimestamp, currentPairData, pairSnapshots, currentCSPRPrice) {
   // catch case where data not puplated yet
-  console.log("currentPairData.createdAtTimestamp", currentPairData.createdAtTimestamp);
+  // console.log("currentPairData.createdAtTimestamp", currentPairData.createdAtTimestamp);
 
   if (!currentPairData.createdAtTimestamp) {
     return []
   }
-  console.log("HELLO");
+  // console.log("HELLO");
 
   let dayIndex: number = Math.round(startDateTimestamp / 86400) // get unique day bucket unix
   const currentDayIndex: number = Math.round(dayjs.utc().unix() / 86400)
   const sortedPositions = pairSnapshots.sort((a, b) => {
     return parseInt(a.timestamp) > parseInt(b.timestamp) ? 1 : -1
   })
-  console.log("sortedPositions", sortedPositions);
+  // console.log("sortedPositions", sortedPositions);
 
   if (sortedPositions[0].timestamp > startDateTimestamp) {
     dayIndex = Math.round(sortedPositions[0].timestamp / 86400)
   }
 
   const dayTimestamps = []
-  console.log("currentDayIndex", currentDayIndex);
-  console.log("dayIndex", dayIndex);
+  // console.log("currentDayIndex", currentDayIndex);
+  // console.log("dayIndex", dayIndex);
 
   while (dayIndex < currentDayIndex) {
     // only account for days where this pair existed
@@ -202,7 +206,7 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
   }
 
   const shareValues = await getShareValueOverTime(currentPairData.id, dayTimestamps)
-  console.log("shareValues", shareValues);
+  // console.log("shareValues", shareValues);
 
   const shareValuesFormatted = {}
   shareValues.map((share) => {
@@ -213,7 +217,7 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
   let positionT0 = pairSnapshots[0]
   const formattedHistory = []
   let netFees = 0
-  console.log("dayTimestamps", dayTimestamps);
+  // console.log("dayTimestamps", dayTimestamps);
 
   // keep track of up to date metrics as we parse each day
   for (const index in dayTimestamps) {
@@ -225,7 +229,7 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
     const dailyChanges = pairSnapshots.filter((snapshot) => {
       return snapshot.timestamp < timestampCeiling && snapshot.timestamp > dayTimestamp
     })
-    console.log("dailyChanges", dailyChanges);
+    // console.log("dailyChanges", dailyChanges);
 
     for (let i = 0; i < dailyChanges.length; i++) {
       const positionT1 = dailyChanges[i]
@@ -302,8 +306,8 @@ export async function getLPReturnsOnPair(user: string, pair, csprPrice: number, 
 
   for (const index in snapshots) {
     // get positions at both bounds of the window
-    console.log("index", index);
-    console.log("snapshots", snapshots);
+    // console.log("index", index);
+    // console.log("snapshots", snapshots);
 
 
     const positionT0 = snapshots[index]

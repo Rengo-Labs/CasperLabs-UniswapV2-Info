@@ -170,7 +170,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
   const ListItem = ({ pairAddress, index }) => {
     const pairData = pairs[pairAddress]
-    console.log("pairDatapairData", pairData);
+    // console.log("pairDatapairData", pairData);
     if (pairData && pairData.token0 && pairData.token1) {
       const liquidity = formattedNum(
         !!pairData.trackedReserveUSD ? pairData.trackedReserveUSD / 10 ** 9 : pairData.reserveUSD / 10 ** 9,

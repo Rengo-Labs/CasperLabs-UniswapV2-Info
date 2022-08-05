@@ -131,7 +131,7 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
       skip += skipCount
     }
   }
-  console.log("fetchedData", fetchedData);
+  // console.log("fetchedData", fetchedData);
   return fetchedData
 }
 
@@ -231,7 +231,7 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
   // for (var row in result?.data) {
   // console.log("row", row);
   let timestamp = result?.data.t[0]
-  console.log("timestamp", timestamp);
+  // console.log("timestamp", timestamp);
   let sharePriceUsd = parseFloat(result.data?.t[0].reserveUSD) / parseFloat(result.data?.t[0].totalSupply)
   if (timestamp) {
     values.push({
@@ -256,7 +256,7 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
   let index = 0
   // for (var brow in result?.data) {
   timestamp = result?.data.b
-  console.log("timestamp", timestamp);
+  // console.log("timestamp", timestamp);
   if (timestamp) {
     values[index].csprPrice = result.data.b.csprPrice
     values[index].token0PriceUSD = result.data.b.csprPrice * values[index].token0DerivedETH

@@ -66,9 +66,9 @@ const PairChart = ({ address, color, base0, base1 }) => {
   // get data for pair, and rates
   const pairData = usePairData(address)
   let chartData = usePairChartData(address)
-  console.log("chartData", chartData);
+  // console.log("chartData", chartData);
   const hourlyData = useHourlyRateData(address, timeWindow)
-  console.log("hourlyData", hourlyData);
+  // console.log("hourlyData", hourlyData);
   const hourlyRate0 = hourlyData && hourlyData[0]
   const hourlyRate1 = hourlyData && hourlyData[1]
 
