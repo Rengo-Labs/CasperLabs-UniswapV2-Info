@@ -495,7 +495,7 @@ function PairPage({ pairAddress, history }) {
                     </AutoRow>
                   </Column>
                   <ButtonLight color={backgroundColor}>
-                    <Link color={backgroundColor} external href={'https://testnet.cspr.live/account/' + pairAddress}>
+                    <Link color={backgroundColor} external href={'https://testnet.cspr.live/contract-package/' + pairAddress}>
                       View on Casper Live ↗
                     </Link>
                   </ButtonLight>

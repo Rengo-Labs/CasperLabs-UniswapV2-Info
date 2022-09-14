@@ -304,8 +304,8 @@ export const Big = (number) => new BigNumber(number)
 export const urls = {
   showTransaction: (tx) => `https://testnet.cspr.live/deploy/${tx}/`,
   showAddress: (address) => `https://testnet.cspr.live/account/${address}/`,
-  showToken: (address) => `https://www.etherscan.io/token/${address}/`,
-  showBlock: (block) => `https://etherscan.io/block/${block}/`,
+  showToken: (address) => `https://testnet.cspr.live/contract-package/${address}/`,
+  showBlock: (block) => `https://testnet.cspr.live/block/${block}/`,
 }
 
 export const formatTime = (unix) => {
