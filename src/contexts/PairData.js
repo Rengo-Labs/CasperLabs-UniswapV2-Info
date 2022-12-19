@@ -9,7 +9,7 @@ import {
   PAIRS_BULK,
   PAIRS_HISTORICAL_BULK,
   HOURLY_PAIR_RATES,
-} from '../apollo/v2queries'
+} from '../apollo/v3queries'
 
 import { useCsprPrice } from './GlobalData'
 
@@ -184,9 +184,10 @@ export default function Provider({ children }) {
 
 async function getBulkPairData(pairList, ethPrice) {
   const [t1, t2, tWeek] = getTimestampsForChanges()
-  let [{ number: b1 }, { number: b2 }, { number: bWeek }] = [{ number: 0 }, { number: 0 }, { number: 0 }]
-  //await getBlocksFromTimestamps([t1, t2, tWeek])
-
+  console.log("t1, t2, tWeek", t1, t2, tWeek);
+  console.log("await getBlocksFromTimestamps([t1, t2, tWeek])", await getBlocksFromTimestamps([t1, t2, tWeek]));
+  let [{ number: b1 }, { number: b2 }, { number: bWeek }] = await getBlocksFromTimestamps([t1, t2, tWeek])
+  // console.log("b1, b2, bWeek", b1, b2, bWeek);
   try {
     // console.log("pairList", pairList);
     let current = await v2client.query({
@@ -210,19 +211,24 @@ async function getBulkPairData(pairList, ethPrice) {
       })
     )
     // console.log("oneDayResult", oneDayResult);
-    let oneDayData = oneDayResult?.data?.pairsbyId.reduce((obj, cur, i) => {
-      // console.log("cur", cur);
+    // console.log("twoDayResult", twoDayResult);
+    // console.log("oneWeekResult", oneWeekResult);
+    let oneDayData = oneDayResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
+      console.log("cur", cur);
       return { ...obj, [cur.id]: cur }
     }, {})
 
-    let twoDayData = twoDayResult?.data?.pairsbyId.reduce((obj, cur, i) => {
+    let twoDayData = twoDayResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
 
-    let oneWeekData = oneWeekResult?.data?.pairsbyId.reduce((obj, cur, i) => {
+    let oneWeekData = oneWeekResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
 
+    console.log("oneDayData", oneDayData);
+    console.log("twoDayData", twoDayData);
+    console.log("oneWeekData", oneWeekData);
     let pairData = await Promise.all(
       current &&
       current.data.allpairs.map(async (pair) => {
@@ -255,6 +261,7 @@ async function getBulkPairData(pairList, ethPrice) {
         return data
       })
     )
+    console.log("pairData", pairData);
     return pairData
   } catch (e) {
     console.log(e)

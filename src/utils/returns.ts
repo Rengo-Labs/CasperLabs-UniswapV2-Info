@@ -1,4 +1,4 @@
-import { USER_MINTS_BUNRS_PER_PAIR } from '../apollo/v2queries'
+import { USER_MINTS_BUNRS_PER_PAIR } from '../apollo/v3queries'
 import { v2client } from '../apollo/client'
 import dayjs from 'dayjs'
 import { getShareValueOverTime } from '.'
@@ -41,10 +41,10 @@ function formatPricesForEarlyTimestamps(position): Position {
       position.token1PriceUSD = 1
     }
     // WETH price
-    if (position.pair?.token0.id === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813') {
+    if (position.pair?.token0.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
       position.token0PriceUSD = 203
     }
-    if (position.pair?.token1.id === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813') {
+    if (position.pair?.token1.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
       position.token1PriceUSD = 203
     }
   }

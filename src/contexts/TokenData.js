@@ -9,7 +9,7 @@ import {
   PRICES_BY_BLOCK,
   PAIR_DATA,
   TOKENS_HISTORICAL_BULK,
-} from '../apollo/v2queries'
+} from '../apollo/v3queries'
 
 import { useCsprPrice } from './GlobalData'
 
@@ -276,7 +276,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
       query: TOKENS_HISTORICAL_BULK(ids2, oneDayBlock),
       fetchPolicy: 'cache-first',
     })
-    console.log("oneDayResult", oneDayResult);
+    // console.log("oneDayResult", oneDayResult);
 
     let twoDayResult = await v2client.query({
       query: TOKENS_HISTORICAL_BULK(ids2, twoDayBlock),
@@ -367,9 +367,9 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
 
         console.log("datadatadata", data);
         // HOTFIX for Aave
-        if (data.id === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813') {
+        if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
           const aaveData = await v2client.query({
-            query: PAIR_DATA('cb0f9f291ae73928b739c90c03eca70cd610d945304ea606fe4adced3fa07060'),
+            query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
             fetchPolicy: 'cache-first',
           })
           console.log("aaveData", aaveData);
@@ -510,9 +510,9 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
 
     // HOTFIX for Aave
     // console.log("datadatadata", data);
-    if (data.id === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813') {
+    if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
       const aaveData = await v2client.query({
-        query: PAIR_DATA('cb0f9f291ae73928b739c90c03eca70cd610d945304ea606fe4adced3fa07060'),
+        query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
         fetchPolicy: 'cache-first',
       })
       // console.log("resultttttttttttttttttttt", aaveData);

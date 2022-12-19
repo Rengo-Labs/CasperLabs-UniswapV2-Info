@@ -6,7 +6,7 @@ import {
   USER_POSITIONS,
   USER_HISTORY,
   PAIR_DAY_DATA_BULK,
-} from '../apollo/v2queries'
+} from '../apollo/v3queries'
 import { useTimeframe, useStartTimestamp } from './Application'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'

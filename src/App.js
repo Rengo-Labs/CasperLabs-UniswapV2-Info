@@ -99,9 +99,9 @@ function App() {
   const [savedOpen, setSavedOpen] = useState(false)
 
   const globalData = useGlobalData()
-  // console.log("globalData", globalData);
+  console.log("globalData", globalData);
   const globalChartData = useGlobalChartData()
-  // console.log("globalChartData", globalChartData);
+  console.log("globalChartData", globalChartData);
   const [latestBlock, headBlock] = useLatestBlocks()
 
   // show warning

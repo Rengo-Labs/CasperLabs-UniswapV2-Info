@@ -3,13 +3,15 @@ import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 import { ethers } from 'ethers'
 import utc from 'dayjs/plugin/utc'
-import { v2client } from '../apollo/client'
-import { SHARE_VALUE } from '../apollo/v2queries'
+import { blockClient, v2client } from '../apollo/client'
+import { SHARE_VALUE } from '../apollo/v3queries'
 import { Text } from 'rebass'
 import _Decimal from 'decimal.js-light'
 import toFormat from 'toformat'
 import { timeframeOptions } from '../constants'
 import Numeral from 'numeral'
+import { GET_BLOCK } from '../apollo/v3queries'
+import { GET_BLOCKS } from '../apollo/v3queries'
 
 // format libraries
 const Decimal = toFormat(_Decimal)
@@ -42,12 +44,12 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
   if (!token1Address) {
     return (
       `https://app.casperswap.xyz/` +
-      (remove ? `pool/removeLiquidity${token0Address === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813' ? token0Address : token0Address}/${'CSPR'}` : `pool/addLiquidity`)
+      (remove ? `pool/removeLiquidity${token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token0Address : token0Address}/${'CSPR'}` : `pool/addLiquidity`)
     )
   } else {
     return (
       `https://app.casperswap.xyz/` +
-      (remove ? `pool/removeLiquidity/${token0Address === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813' ? token0Address : token0Address}/${token1Address === 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813' ? token1Address : token1Address
+      (remove ? `pool/removeLiquidity/${token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token0Address : token0Address}/${token1Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token1Address : token1Address
         }` : `pool/addLiquidity`)
     )
   }
@@ -141,15 +143,19 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
  * @param {Int} timestamp in seconds
  */
 export async function getBlockFromTimestamp(timestamp) {
-  // let result = await blockClient.query({
-  //   query: GET_BLOCK,
-  //   variables: {
-  //     timestampFrom: timestamp,
-  //     timestampTo: timestamp + 600,
-  //   },
-  //   fetchPolicy: 'cache-first',
-  // })
-  // return result?.data?.blocks?.[0]?.number
+  // console.log("timestamptimestamp", timestamp);
+  // console.log("new Date(timestamp)new Date(timestamp)", new Date(timestamp * 1000).toISOString());
+  let timestampFrom = new Date(timestamp * 1000).toISOString();
+  let timestampTo = new Date((timestamp + 600) * 1000).toISOString();
+
+
+  let result = await blockClient.query({
+    query: GET_BLOCK(timestampFrom.toString(), timestampTo.toString()),
+    fetchPolicy: 'cache-first',
+  })
+
+  console.log("resultresultresultresult", result);
+  return result?.data?.getBlockBetweenTimestampsAsc?.number
 }
 
 /**
@@ -164,19 +170,26 @@ export async function getBlocksFromTimestamps(timestamps, skipCount = 500) {
     return []
   }
 
-  //let fetchedData = await splitQuery(GET_BLOCKS, blockClient, [], timestamps, skipCount)
-
+  let fetchedData = await splitQuery(GET_BLOCKS, blockClient, [], timestamps, skipCount)
+  console.log("fetchedData", fetchedData);
   let blocks = []
-  // if (fetchedData) {
-  //   for (var t in fetchedData) {
-  //     if (fetchedData[t].length > 0) {
-  //       blocks.push({
-  //         timestamp: t.split('t')[1],
-  //         number: fetchedData[t][0]['number'],
-  //       })
-  //     }
-  //   }
-  // }
+  if (fetchedData) {
+    for (var t in fetchedData) {
+      console.log("fetchedData[t]", fetchedData[t]);
+      if (fetchedData[t] != null) {
+        blocks.push({
+          timestamp: t.split('t')[1],
+          number: fetchedData[t]['number'],
+        })
+      } else {
+        blocks.push({
+          timestamp: 0,
+          number: 0,
+        })
+      }
+    }
+  }
+  console.log("blocks", blocks);
   return blocks
 }
 

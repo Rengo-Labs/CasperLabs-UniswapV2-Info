@@ -18,7 +18,7 @@ import {
   ALL_PAIRS,
   ALL_TOKENS,
   TOP_LPS_PER_PAIRS,
-} from '../apollo/v2queries'
+} from '../apollo/v3queries'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { useAllPairData } from './PairData'
 import { useTokenChartDataCombined, useTokenDataCombined } from './TokenData'
@@ -32,7 +32,7 @@ const UPDATE_ALL_TOKENS_IN_UNISWAP = 'UPDATE_ALL_TOKENS_IN_UNISWAP'
 const UPDATE_TOP_LPS = 'UPDATE_TOP_LPS'
 
 const offsetVolumes = [
-  // 'afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813',
+  // '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184',
   // '03e3e09b28dc4d41a4507b38073e7a1641becc0b40e79beb72733d2fb022defa',
   // "bdcd8c9844cd2f98c81b3f98ce806f20c5a625f954d7b29bf70626fef060ff1f",
   // '6603c25b9abcac478c0c2d0201b161f3bb0a498185aa771c6ce06e26f345dfc1',
@@ -246,6 +246,8 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       utcTwoWeeksBack,
     ])
 
+    console.log("oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock", oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock);
+
     // fetch the global data
     let result = await v2client.query({
       query: GLOBAL_DATA(),
@@ -256,27 +258,43 @@ async function getGlobalData(ethPrice, oldEthPrice) {
 
     // fetch the historical data
     let oneDayResult = await v2client.query({
-      query: GLOBAL_DATA(oneDayBlock?.number),
+      query: GLOBAL_DATA(
+        // 1337882
+        oneDayBlock?.number
+      ),
       fetchPolicy: 'cache-first',
     })
+    console.log("oneDayResult", oneDayResult);
     oneDayData = oneDayResult.data.uniswapfactory
 
     let twoDayResult = await v2client.query({
-      query: GLOBAL_DATA(twoDayBlock?.number),
+      query: GLOBAL_DATA(
+        // 1337882
+        twoDayBlock?.number
+      ),
       fetchPolicy: 'cache-first',
     })
+    console.log("twoDayResult", twoDayResult);
     twoDayData = twoDayResult.data.uniswapfactory
 
     let oneWeekResult = await v2client.query({
-      query: GLOBAL_DATA(oneWeekBlock?.number),
+      query: GLOBAL_DATA(
+        // 1337882
+        oneWeekBlock?.number
+      ),
       fetchPolicy: 'cache-first',
     })
+    console.log("oneWeekResult", oneWeekResult);
     const oneWeekData = oneWeekResult.data.uniswapfactory
 
     let twoWeekResult = await v2client.query({
-      query: GLOBAL_DATA(twoWeekBlock?.number),
+      query: GLOBAL_DATA(
+        // 1337882
+
+      ),
       fetchPolicy: 'cache-first',
     })
+    console.log("twoWeekResult", twoWeekResult);
     const twoWeekData = twoWeekResult.data.uniswapfactory
 
     if (data && oneDayData && twoDayData && twoWeekData) {
@@ -499,6 +517,7 @@ const getEthPrice = async () => {
 
   try {
     let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
+    console.log("oneDayBlock", oneDayBlock);
     let result = await v2client.query({
       query: ETH_PRICE(),
       fetchPolicy: 'cache-first',
@@ -510,7 +529,7 @@ const getEthPrice = async () => {
     })
     console.log("ETH_PRICE2", resultOneDay);
     const currentPrice = result?.data?.bundle?.ethPrice
-    const oneDayBackPrice = resultOneDay?.data?.bundle?.ethPrice
+    const oneDayBackPrice = resultOneDay?.data?.bundleByIdandBlock?.ethPrice //null
     // console.log("currentPrice", currentPrice);
     // console.log("oneDayBackPrice", oneDayBackPrice);
     priceChangeETH = getPercentChange(currentPrice, oneDayBackPrice)
@@ -593,30 +612,34 @@ async function getAllTokensOnUniswap() {
  */
 export function useGlobalData() {
   const [state, { update, updateAllPairsInUniswap, updateAllTokensInUniswap }] = useGlobalDataContext()
-  const [ethPrice, oldEthPrice] = useCsprPrice()
-
+  let [ethPrice, oldEthPrice] = useCsprPrice()
+  // oldEthPrice = 1.25
+  console.log("ethPrice", ethPrice);
+  console.log("oldEthPrice", oldEthPrice);
   const data = state?.globalData
-
+  console.log("data", data);
   // const combinedVolume = useTokenDataCombined(offsetVolumes)
 
   useEffect(() => {
     async function fetchData() {
       let globalData = await getGlobalData(ethPrice, oldEthPrice)
-      // console.log("globalData =", globalData);
+      console.log("globalData =", globalData);
       globalData && update(globalData)
 
       let allPairs = await getAllPairsOnUniswap()
       updateAllPairsInUniswap(allPairs)
 
       let allTokens = await getAllTokensOnUniswap()
-      // console.log("allTokensallTokens", allTokens);
+      console.log("allTokensallTokens", allTokens);
       updateAllTokensInUniswap(allTokens)
     }
-    if (!data && ethPrice && oldEthPrice) {
+    if (!data && ethPrice
+      // && oldEthPrice
+    ) {
       fetchData()
     }
   }, [ethPrice, oldEthPrice, update, data, updateAllPairsInUniswap, updateAllTokensInUniswap])
-  // console.log("useGlobalData", data);
+  console.log("useGlobalData", data);
   return data || {}
 }
 
@@ -690,6 +713,7 @@ export function useCsprPrice() {
     async function checkForEthPrice() {
       if (!ethPrice) {
         let [newPrice, oneDayPrice, priceChange] = await getEthPrice()
+        console.log("newPrice", newPrice, oneDayPrice, priceChange);
         updateEthPrice(newPrice, oneDayPrice, priceChange)
       }
     }

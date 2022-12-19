@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import { FACTORY_ADDRESS, BUNDLE_ID } from '../constants'
+import { v2client } from './client';
 
 const Factory_Address = "97b51a031595770f66498f66e8eb8082ac8ab4df4dd05d8f1dd746b94b424e3c";
 export const SUBGRAPH_HEALTH = gql`
@@ -20,12 +21,12 @@ export const SUBGRAPH_HEALTH = gql`
 `
 
 //ok
-//changed query
+//Hassan changed query
 export const PRICES_BY_BLOCK = (tokenAddress, blocks) => {
   let queryString = 'query blocks {'
   queryString += blocks.map(
     (block) => `
-      t${block.timestamp}:tokenbyid(id:"${tokenAddress}") {
+      t${block.timestamp}:tokenbyIdandBlock(id: ${tokenAddress}, blockNumber : ${block.number}) {
         derivedETH
       }
     `
@@ -33,13 +34,44 @@ export const PRICES_BY_BLOCK = (tokenAddress, blocks) => {
   queryString += ','
   queryString += blocks.map(
     (block) => `
-      b${block.timestamp}: bundle(id:"1",number: ${block.number}) {
+      b${block.timestamp}: bundleByIdandBlock(id:"1",blockNumber: ${block.number}) {
         ethPrice
       }
     `
   )
 
   queryString += '}'
+  return gql(queryString)
+}
+
+
+export const GET_BLOCK = (timestampFrom, timestampTo) => {
+  console.log("timestampFromtimestampFromtimestampFrom", timestampFrom);
+  console.log("timestampTotimestampTotimestampTo", timestampTo);
+  let queryString = `
+  query getBlockBetweenTimestampsAsc {
+    getBlockBetweenTimestampsAsc(timestampFrom : "${timestampFrom}", timestampTo : "${timestampTo}") {
+      id
+      number
+      timestamp
+    }
+  }
+  `
+  // console.log("queryString", queryString);
+  return gql(queryString)
+}
+
+export const GET_BLOCKS = (timestamps) => {
+  console.log("timestampstimestampstimestamps", timestamps);
+  let queryString = 'query getBlockBetweenTimestampsDesc {'
+  queryString += timestamps.map((timestamp) => {
+    return `t${timestamp}:getBlockBetweenTimestampsDesc(timestampFrom: "${new Date(timestamp * 1000).toISOString()}", timestampTo: "${new Date((timestamp + 600) * 1000).toISOString()}") 
+    {
+      number
+    }`
+  })
+  queryString += '}'
+  // console.log("queryString", queryString);
   return gql(queryString)
 }
 
@@ -60,12 +92,12 @@ export const TOP_LPS_PER_PAIRS = gql`
   }
 `
 //Ok
-//changed query
+//Hassan changed query
 export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
   let queryString = 'query blocks {'
   queryString += blocks.map(
     (block) => `
-      t${block.timestamp}: pairbyid(id:"${pairAddress}") {
+      t${block.timestamp}: pairbyId(id:"${pairAddress}") {
         token0Price
         token1Price
       }
@@ -108,12 +140,12 @@ export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
 //   queryString += '}'
 //   return gql(queryString)
 // }
+//Hassan Changed Query
 export const SHARE_VALUE = (pairAddress, blocks) => {
-  // console.log("pairAddresspairAddress", pairAddress);
-  let pair = `"${pairAddress}"`
-  let queryString = `
-    query blocks {
-      t:pairbyId(id:${pair}) {
+  let queryString = 'query blocks {'
+  queryString += blocks.map(
+    (block) => `
+      t${block.timestamp}:pairbyIdandBlock(id:"${pairAddress}", blockNumber: ${block.number}) {
         reserve0
         reserve1
         reserveUSD
@@ -125,23 +157,37 @@ export const SHARE_VALUE = (pairAddress, blocks) => {
           derivedETH
         }
       }
-      b: bundle(id:"1") {
+    `
+  )
+  queryString += ','
+  queryString += blocks.map(
+    (block) => `
+      b${block.timestamp}: bundleByIdandBlock(id:"1", blockNumber: {${block.number} ) {
         ethPrice
       }
-    }
-  `
+    `
+  )
+
+  queryString += '}'
   return gql(queryString)
 }
 //Ok
-//changed query
+//Hassan changed query
 export const ETH_PRICE = (block) => {
-  const queryString = ` query bundle {
-      bundle(id: "1") {
+  const queryString = block ? ` query bundle {
+      bundleByIdandBlock(id: "1", blockNumber : "${block}") {
         id
         ethPrice
       }
     }
-  `
+  `: ` query bundle {
+    bundle(id: "1") {
+      id
+      ethPrice
+    }
+  }
+`
+  // console.log("queryString", queryString);
   return gql(queryString)
 }
 
@@ -388,11 +434,12 @@ export const GLOBAL_CHART = gql`
   }
 `
 //Ok
-//changed query
+//Hassan changed query
 export const GLOBAL_DATA = (block) => {
+  console.log("blockblockblockblockblock", block);
   let factoryaddress = `"${Factory_Address}"`
   const queryString = ` query uniswapfactory {
-    uniswapfactory(id: ${factoryaddress}) {
+    uniswapfactory(id: ${factoryaddress}, ${block && block != 0 ? `blockNumber : "${block}"` : ``} ) {
         id
         totalVolumeUSD
         totalVolumeETH
@@ -403,6 +450,7 @@ export const GLOBAL_DATA = (block) => {
         pairCount
       }
     }`
+  console.log("queryString", queryString);
   return gql(queryString)
 }
 
@@ -618,18 +666,19 @@ export const PAIRS_CURRENT = gql`
   }
 `
 //Ok
-//changed query
+//Hassan changed query
 export const PAIR_DATA = (pairAddress, block) => {
 
   let pairString = `"${pairAddress}"`
   let queryString = `
   ${PairFields}
-  query pairbyId {
-    pairbyId(id: ${pairString} ) {
+  query pairbyIdandBlock {
+    pairbyIdandBlock(id: ${pairString}, blockNumber : "${block}" ) {
       ...PairFields
     }
   }
   `
+  // console.log("queryStringqueryString", queryString)
   return gql(queryString)
 
 }
@@ -648,26 +697,31 @@ export const PAIRS_BULK = gql`
 
 //Ok
 //orderBy: trackedReserveETH, orderDirection: desc
-//changed query
+//Hassan changed query
 export const PAIRS_HISTORICAL_BULK = (block, pairs) => {
+  // console.log("pairs", pairs);
+  // for (let index = 0; index < array.length; index++) {
+  //   const element = array[index];
 
+  // }
   let pairsString = `[`
   pairs.map((pair) => {
     return (pairsString += `"${pair}",`)
   })
   pairsString += ']'
-  // console.log("pairsString", pairsString);
+
   let queryString = `
-  query pairsbyId {
-    pairsbyId(first: 200, id: ${pairsString} ) {
-      id
-      reserveUSD
-      trackedReserveETH
-      volumeUSD
-      untrackedVolumeUSD
-    }
-  }
-  `
+   query pairsByIds {
+     pairsByIds(first: 200, ids: ${pairsString}, blockNumber:"${block}" ) {
+       id
+       reserveUSD
+       trackedReserveETH
+       volumeUSD
+       untrackedVolumeUSD
+     }
+   }
+   `
+  // console.log("queryString", queryString);
   return gql(queryString)
 }
 
@@ -717,18 +771,12 @@ export const TOKEN_TOP_DAY_DATAS = gql`
 `
 
 //Ok
-//changed query
+//hassan changed query
 export const TOKENS_HISTORICAL_BULK = (tokens, block) => {
-  // console.log("tokenstokenstokens", tokens);
-  let tokenString = `[`
-  tokens.map((token) => {
-    return (tokenString += `"${token}",`)
-  })
-  tokenString += ']'
-  // console.log("tokenString", tokenString);
+
   let queryString = `
-  query tokensbyId {
-    tokensbyId(first: 50,id: ${tokenString} ) {
+  query tokensByIdsandBlock {
+    tokensByIdsandBlock(first: 50,ids: ${tokens}, blockNumber : "${block}") {
       id
       name
       symbol
@@ -766,11 +814,12 @@ export const TOKENS_HISTORICAL_BULK = (tokens, block) => {
 //   return gql(queryString)
 // }
 
+//Hassan Changed Query
 export const TOKEN_DATA = (tokenAddress, block) => {
   const queryString = `
     ${TokenFields}
     query {
-      tokenbyId(id:"${tokenAddress}") {
+      tokenbyIdandBlock(id:"${tokenAddress}", blockNumber : "${block}") {
         ...TokenFields
       }
       pairs0: pairsbytoken0(first: 50, token0: "${tokenAddress}"){
@@ -852,3 +901,15 @@ export const FILTERED_TRANSACTIONS = gql`
     }
   }
 `
+
+
+async function getData() {
+  const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
+  let res = await v2client.query({
+    query: TOKEN_TOP_DAY_DATAS,
+    fetchPolicy: 'cache-first',
+    variables: { date: currentDate.toString() },
+  })
+  console.log("resresresresresresresresres", res);
+}
+getData()

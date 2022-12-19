@@ -204,7 +204,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
             </DataText>
           )}
           <DataText area="liq">{formattedNum(item.totalLiquidityUSD / 10 ** 9, true)}</DataText>
-          <DataText area="vol">{formattedNum(item.tradeVolume / 10 ** 9, true)}</DataText>
+          <DataText area="vol">{formattedNum(item.oneDayVolumeUSD / 10 ** 9, true)}</DataText>
           {!below1080 && (
             <DataText area="price" color="text" fontWeight="500">
               {formattedNum(item.priceUSD, true)}
@@ -268,7 +268,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
               )
             }}
           >
-            Trade Volume
+            Volume (24hrs)
             {sortedColumn === (useTracked ? SORT_FIELD.VOL_UT : SORT_FIELD.VOL) ? (!sortDirection ? '↑' : '↓') : ''}
           </ClickableText>
         </Flex>
