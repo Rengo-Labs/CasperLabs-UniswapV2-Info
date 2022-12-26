@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useMemo, useCallback, use
 
 import { v2client } from '../apollo/client'
 import {
-  PAIR_DATA,
+  PAIR_DATA_BY_ID_AND_BLOCK,
   PAIR_CHART,
   FILTERED_TRANSACTIONS,
   PAIRS_CURRENT,
@@ -39,9 +39,9 @@ dayjs.extend(utc)
 export function safeAccess(object, path) {
   return object
     ? path.reduce(
-      (accumulator, currentValue) => (accumulator && accumulator[currentValue] ? accumulator[currentValue] : null),
-      object
-    )
+        (accumulator, currentValue) => (accumulator && accumulator[currentValue] ? accumulator[currentValue] : null),
+        object
+      )
     : null
 }
 
@@ -184,8 +184,8 @@ export default function Provider({ children }) {
 
 async function getBulkPairData(pairList, ethPrice) {
   const [t1, t2, tWeek] = getTimestampsForChanges()
-  console.log("t1, t2, tWeek", t1, t2, tWeek);
-  console.log("await getBlocksFromTimestamps([t1, t2, tWeek])", await getBlocksFromTimestamps([t1, t2, tWeek]));
+  console.log('t1, t2, tWeek', t1, t2, tWeek)
+  console.log('await getBlocksFromTimestamps([t1, t2, tWeek])', await getBlocksFromTimestamps([t1, t2, tWeek]))
   let [{ number: b1 }, { number: b2 }, { number: bWeek }] = await getBlocksFromTimestamps([t1, t2, tWeek])
   // console.log("b1, b2, bWeek", b1, b2, bWeek);
   try {
@@ -197,7 +197,7 @@ async function getBulkPairData(pairList, ethPrice) {
       },
       fetchPolicy: 'cache-first',
     })
-    console.log("PAIRS_BULK", current);
+    console.log('PAIRS_BULK', current)
 
     let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
       [b1, b2, bWeek].map(async (block) => {
@@ -206,62 +206,63 @@ async function getBulkPairData(pairList, ethPrice) {
           query: PAIRS_HISTORICAL_BULK(block, pairList),
           fetchPolicy: 'cache-first',
         })
-        console.log("PAIRS_HISTORICAL_BULK", result);
+
+        console.log('PAIRS_HISTORICAL_BULK', result)
         return result
       })
     )
     // console.log("oneDayResult", oneDayResult);
     // console.log("twoDayResult", twoDayResult);
     // console.log("oneWeekResult", oneWeekResult);
-    let oneDayData = oneDayResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
-      console.log("cur", cur);
+    let oneDayData = oneDayResult?.data?.pairsByIdsandBlock?.reduce((obj, cur, i) => {
+      console.log('cur', cur)
       return { ...obj, [cur.id]: cur }
     }, {})
 
-    let twoDayData = twoDayResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
+    let twoDayData = twoDayResult?.data?.pairsByIdsandBlock?.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
 
-    let oneWeekData = oneWeekResult?.data?.pairsByIds?.reduce((obj, cur, i) => {
+    let oneWeekData = oneWeekResult?.data?.pairsByIdsandBlock?.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
 
-    console.log("oneDayData", oneDayData);
-    console.log("twoDayData", twoDayData);
-    console.log("oneWeekData", oneWeekData);
+    console.log('oneDayData', oneDayData)
+    console.log('twoDayData', twoDayData)
+    console.log('oneWeekData', oneWeekData)
     let pairData = await Promise.all(
       current &&
-      current.data.allpairs.map(async (pair) => {
-        let data = pair
-        let oneDayHistory = oneDayData?.[pair.id]
-        if (!oneDayHistory) {
-          let newData = await v2client.query({
-            query: PAIR_DATA(pair.id, b1),
-            fetchPolicy: 'cache-first',
-          })
-          oneDayHistory = newData.data.pairbyId[0]
-        }
-        let twoDayHistory = twoDayData?.[pair.id]
-        if (!twoDayHistory) {
-          let newData = await v2client.query({
-            query: PAIR_DATA(pair.id, b2),
-            fetchPolicy: 'cache-first',
-          })
-          twoDayHistory = newData.data.pairbyId[0]
-        }
-        let oneWeekHistory = oneWeekData?.[pair.id]
-        if (!oneWeekHistory) {
-          let newData = await v2client.query({
-            query: PAIR_DATA(pair.id, bWeek),
-            fetchPolicy: 'cache-first',
-          })
-          oneWeekHistory = newData.data.pairbyId[0]
-        }
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
-        return data
-      })
+        current.data.allpairs.map(async (pair) => {
+          let data = pair
+          let oneDayHistory = oneDayData?.[pair.id]
+          if (!oneDayHistory) {
+            let newData = await v2client.query({
+              query: PAIR_DATA_BY_ID_AND_BLOCK(pair.id, b1),
+              fetchPolicy: 'cache-first',
+            })
+            oneDayHistory = newData.data.pairbyIdandBlock[0]
+          }
+          let twoDayHistory = twoDayData?.[pair.id]
+          if (!twoDayHistory) {
+            let newData = await v2client.query({
+              query: PAIR_DATA_BY_ID_AND_BLOCK(pair.id, b2),
+              fetchPolicy: 'cache-first',
+            })
+            twoDayHistory = newData.data.pairbyIdandBlock[0]
+          }
+          let oneWeekHistory = oneWeekData?.[pair.id]
+          if (!oneWeekHistory) {
+            let newData = await v2client.query({
+              query: PAIR_DATA_BY_ID_AND_BLOCK(pair.id, bWeek),
+              fetchPolicy: 'cache-first',
+            })
+            oneWeekHistory = newData.data.pairbyIdandBlock[0]
+          }
+          data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+          return data
+        })
     )
-    console.log("pairData", pairData);
+    console.log('pairData', pairData)
     return pairData
   } catch (e) {
     console.log(e)
@@ -270,7 +271,6 @@ async function getBulkPairData(pairList, ethPrice) {
 
 function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBlock) {
   const pairAddress = data.id
-
   // get volume changes
   const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
     data?.volumeUSD,
@@ -337,7 +337,7 @@ const getPairTransactions = async (pairAddress) => {
       },
       fetchPolicy: 'no-cache',
     })
-    console.log("FILTERED_TRANSACTIONS", result);
+    console.log('FILTERED_TRANSACTIONS', result)
     transactions.mints = result.data.mintsallpairs
     transactions.burns = result.data.burnsallpairs
     transactions.swaps = result.data.swapsallpairs
@@ -368,10 +368,12 @@ const getPairChartData = async (pairAddress) => {
         },
         fetchPolicy: 'cache-first',
       })
-      console.log("PAIR_CHART", result);
+      console.log('PAIR_CHART', result)
       for (let index = 0; index < result.data.pairdaydatasbypairAddress.length; index++) {
-        result.data.pairdaydatasbypairAddress[index].reserveUSDValue = result.data.pairdaydatasbypairAddress[index].reserveUSD / 10 ** 9;
-        result.data.pairdaydatasbypairAddress[index].dailyVolumeUSDValue = result.data.pairdaydatasbypairAddress[index].dailyVolumeUSD / 10 ** 9;
+        result.data.pairdaydatasbypairAddress[index].reserveUSDValue =
+          result.data.pairdaydatasbypairAddress[index].reserveUSD / 10 ** 9
+        result.data.pairdaydatasbypairAddress[index].dailyVolumeUSDValue =
+          result.data.pairdaydatasbypairAddress[index].dailyVolumeUSD / 10 ** 9
       }
 
       skip += 1000
@@ -413,7 +415,7 @@ const getPairChartData = async (pairAddress) => {
             dailyVolumeUSD: 0,
             dailyVolumeUSDValue: 0,
             reserveUSD: latestLiquidityUSD,
-            reserveUSDValue: latestLiquidityUSDValue
+            reserveUSDValue: latestLiquidityUSDValue,
           })
         } else {
           latestLiquidityUSD = dayIndexArray[index].reserveUSD
@@ -516,7 +518,7 @@ export function Updater() {
         query: PAIRS_CURRENT,
         fetchPolicy: 'cache-first',
       })
-      console.log("PAIRS_CURRENT", pairs);
+      console.log('PAIRS_CURRENT', pairs)
       // console.log("ethPrice", ethPrice);
       // format as array of addresses
       const formattedPairs = pairs.map((pair) => {
@@ -630,7 +632,10 @@ export function usePairData(pairAddress) {
         data && update(pairAddress, data[0])
       }
     }
-    if (!pairData && pairAddress && ethPrice
+    if (
+      !pairData &&
+      pairAddress &&
+      ethPrice
       // && isAddress(pairAddress)
     ) {
       fetchData()
