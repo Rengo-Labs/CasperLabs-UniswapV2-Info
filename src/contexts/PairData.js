@@ -456,6 +456,8 @@ const getHourlyRateData = async (pairAddress, startTime, latestBlock) => {
 
     blocks = await getBlocksFromTimestamps(timestamps, 100)
 
+    blocks = blocks.filter((block) => block.number && block.timestamp)
+
     // catch failing case
     if (!blocks || blocks?.length === 0) {
       return []

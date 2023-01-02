@@ -44,13 +44,28 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
   if (!token1Address) {
     return (
       `https://app.casperswap.xyz/` +
-      (remove ? `pool/removeLiquidity${token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token0Address : token0Address}/${'CSPR'}` : `pool/addLiquidity`)
+      (remove
+        ? `pool/removeLiquidity${
+            token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184'
+              ? token0Address
+              : token0Address
+          }/${'CSPR'}`
+        : `pool/addLiquidity`)
     )
   } else {
     return (
       `https://app.casperswap.xyz/` +
-      (remove ? `pool/removeLiquidity/${token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token0Address : token0Address}/${token1Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184' ? token1Address : token1Address
-        }` : `pool/addLiquidity`)
+      (remove
+        ? `pool/removeLiquidity/${
+            token0Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184'
+              ? token0Address
+              : token0Address
+          }/${
+            token1Address === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184'
+              ? token1Address
+              : token1Address
+          }`
+        : `pool/addLiquidity`)
     )
   }
 }
@@ -119,10 +134,12 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
       end = skip + skipCount
     }
     let sliced = list.slice(skip, end)
+
     let result = await localClient.query({
       query: query(...vars, sliced),
       fetchPolicy: 'cache-first',
     })
+
     fetchedData = {
       ...fetchedData,
       ...result.data,
@@ -133,7 +150,6 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
       skip += skipCount
     }
   }
-  // console.log("fetchedData", fetchedData);
   return fetchedData
 }
 
@@ -145,16 +161,15 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
 export async function getBlockFromTimestamp(timestamp) {
   // console.log("timestamptimestamp", timestamp);
   // console.log("new Date(timestamp)new Date(timestamp)", new Date(timestamp * 1000).toISOString());
-  let timestampFrom = new Date(timestamp * 1000).toISOString();
-  let timestampTo = new Date((timestamp + 600) * 1000).toISOString();
-
+  let timestampFrom = new Date(timestamp * 1000).toISOString()
+  let timestampTo = new Date((timestamp + 600) * 1000).toISOString()
 
   let result = await blockClient.query({
     query: GET_BLOCK(timestampFrom.toString(), timestampTo.toString()),
     fetchPolicy: 'cache-first',
   })
 
-  console.log("resultresultresultresult", result);
+  console.log('resultresultresultresult', result)
   return result?.data?.getBlockBetweenTimestampsAsc?.number
 }
 
@@ -171,11 +186,10 @@ export async function getBlocksFromTimestamps(timestamps, skipCount = 500) {
   }
 
   let fetchedData = await splitQuery(GET_BLOCKS, blockClient, [], timestamps, skipCount)
-  console.log("fetchedData", fetchedData);
+
   let blocks = []
   if (fetchedData) {
     for (var t in fetchedData) {
-      console.log("fetchedData[t]", fetchedData[t]);
       if (fetchedData[t] != null) {
         blocks.push({
           timestamp: t.split('t')[1],
@@ -189,7 +203,7 @@ export async function getBlocksFromTimestamps(timestamps, skipCount = 500) {
       }
     }
   }
-  console.log("blocks", blocks);
+  console.log('blocks', blocks)
   return blocks
 }
 
@@ -229,54 +243,58 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
   }
 
   // get blocks based on timestamps
-  const blocks = await getBlocksFromTimestamps(timestamps)
+  let blocks = await getBlocksFromTimestamps(timestamps)
+
+  blocks = blocks.filter((block) => block.number && block.timestamp)
+
+  console.log('Share value blocks ', blocks)
   // console.log("blocks", blocks);
   // console.log("pairAddress", pairAddress);
   // get historical share values with time travel queries
   // let result;
+
   let result = await v2client.query({
     query: SHARE_VALUE(pairAddress, blocks),
     fetchPolicy: 'cache-first',
   })
-  console.log("SHARE_VALUE", result);
+  console.log('SHARE_VALUE', result)
 
   let values = []
-  // for (var row in result?.data) {
-  // console.log("row", row);
-  let timestamp = result?.data.t[0]
-  // console.log("timestamp", timestamp);
-  let sharePriceUsd = parseFloat(result.data?.t[0].reserveUSD) / parseFloat(result.data?.t[0].totalSupply)
-  if (timestamp) {
-    values.push({
-      timestamp,
-      sharePriceUsd,
-      totalSupply: result.data.t[0].totalSupply,
-      reserve0: result.data.t[0].reserve0,
-      reserve1: result.data.t[0].reserve1,
-      reserveUSD: result.data.t[0].reserveUSD,
-      token0DerivedETH: result.data.t[0].token0.derivedETH,
-      token1DerivedETH: result.data.t[0].token1.derivedETH,
-      roiUsd: values && values[0] ? sharePriceUsd / values[0]['sharePriceUsd'] : 1,
-      csprPrice: 0,
-      token0PriceUSD: 0,
-      token1PriceUSD: 0,
-    })
+
+  for (var row in result?.data) {
+    let timestamp = row.split('t')[1]
+    let sharePriceUsd = parseFloat(result.data[row][0]?.reserveUSD) / parseFloat(result.data[row][0]?.totalSupply)
+    if (timestamp) {
+      console.log('data row is ', result.data[row][0])
+      console.log('data row has token 0 ', result.data[row][0].token0)
+      values.push({
+        timestamp,
+        sharePriceUsd,
+        totalSupply: result.data[row][0].totalSupply,
+        reserve0: result.data[row][0].reserve0,
+        reserve1: result.data[row][0].reserve1,
+        reserveUSD: result.data[row][0].reserveUSD,
+        token0DerivedETH: result.data[row][0].token0.derivedETH,
+        token1DerivedETH: result.data[row][0].token1.derivedETH,
+        roiUsd: values && values[0] ? sharePriceUsd / values[0]['sharePriceUsd'] : 1,
+        csprPrice: 0,
+        token0PriceUSD: 0,
+        token1PriceUSD: 0,
+      })
+    }
   }
-  // console.log("values0", values);
-  // }
 
   // add eth prices
   let index = 0
-  // for (var brow in result?.data) {
-  timestamp = result?.data.b
-  // console.log("timestamp", timestamp);
-  if (timestamp) {
-    values[index].csprPrice = result.data.b.csprPrice
-    values[index].token0PriceUSD = result.data.b.csprPrice * values[index].token0DerivedETH
-    values[index].token1PriceUSD = result.data.b.csprPrice * values[index].token1DerivedETH
+  for (var brow in result?.data) {
+    let timestamp = brow.split('b')[1]
+    if (timestamp) {
+      values[index].ethPrice = result.data[brow].ethPrice
+      values[index].token0PriceUSD = result.data[brow].ethPrice * values[index].token0DerivedETH
+      values[index].token1PriceUSD = result.data[brow].ethPrice * values[index].token1DerivedETH
+      index += 1
+    }
   }
-  // }
-  // console.log("values1", values);
 
   return values
 }

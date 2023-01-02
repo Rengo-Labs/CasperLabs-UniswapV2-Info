@@ -224,7 +224,6 @@ export default function Provider({ children }) {
 }
 
 const getTopTokens = async (ethPrice, ethPriceOld) => {
-  debugger
   const utcCurrentTime = dayjs()
   const utcOneDayBack = utcCurrentTime.subtract(1, 'day').unix()
   const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').unix()
@@ -368,6 +367,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
 
           console.log('datadatadata', data)
           // HOTFIX for Aave
+
           if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
             const aaveData = await v2client.query({
               query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
@@ -398,7 +398,6 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
 }
 
 const getTokenData = async (address, ethPrice, ethPriceOld) => {
-  debugger
   const utcCurrentTime = dayjs()
   const utcOneDayBack = utcCurrentTime.subtract(1, 'day').startOf('minute').unix()
   const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').startOf('minute').unix()
@@ -512,6 +511,7 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
 
     // HOTFIX for Aave
     // console.log("datadatadata", data);
+
     if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
       const aaveData = await v2client.query({
         query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
@@ -531,7 +531,6 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
 }
 
 const getTokenTransactions = async (allPairsFormatted) => {
-  debugger
   const transactions = {}
   // console.log("allPairsFormatted", allPairsFormatted);
   try {
@@ -554,7 +553,6 @@ const getTokenTransactions = async (allPairsFormatted) => {
 
 const getTokenPairs = async (tokenAddress) => {
   try {
-    debugger
     // fetch all current and historical data
     let result = await v2client.query({
       query: TOKEN_DATA(tokenAddress),
@@ -568,7 +566,6 @@ const getTokenPairs = async (tokenAddress) => {
 }
 
 const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, latestBlock) => {
-  debugger
   const utcEndTime = dayjs.utc()
   let time = startTime
   // console.log("startTimestartTime", startTime);
@@ -590,6 +587,8 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
   try {
     blocks = await getBlocksFromTimestamps(timestamps, 100)
 
+    blocks = blocks.filter((block) => block.number && block.timestamp)
+
     // catch failing case
     if (!blocks || blocks.length === 0) {
       return []
@@ -600,8 +599,10 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
         return parseFloat(b.number) <= parseFloat(latestBlock)
       })
     }
+
     // console.log("tokenAddresstokenAddresstokenAddress", tokenAddress);
     let result = await splitQuery(PRICES_BY_BLOCK, v2client, [tokenAddress], blocks, 50)
+
     // console.log("fetchedDeta", result);
     // console.log("result", result);
     // format token ETH price results
@@ -647,7 +648,6 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
 }
 
 const getTokenChartData = async (tokenAddress) => {
-  debugger
   let data = []
   const utcEndTime = dayjs.utc()
   let utcStartTime = utcEndTime.subtract(1, 'year')

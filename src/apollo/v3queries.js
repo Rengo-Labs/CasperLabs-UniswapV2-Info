@@ -41,12 +41,11 @@ export const PRICES_BY_BLOCK = (tokenAddress, blocks) => {
   )
 
   queryString += '}'
+
   return gql(queryString)
 }
 
 export const GET_BLOCK = (timestampFrom, timestampTo) => {
-  console.log('timestampFromtimestampFromtimestampFrom', timestampFrom)
-  console.log('timestampTotimestampTotimestampTo', timestampTo)
   let queryString = `
   query getBlockBetweenTimestampsAsc {
     getBlockBetweenTimestampsAsc(timestampFrom : "${timestampFrom}", timestampTo : "${timestampTo}") {
@@ -96,12 +95,10 @@ export const TOP_LPS_PER_PAIRS = gql`
 export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
   let queryString = 'query blocks {'
   queryString += blocks.map(
-    (block) => `
-      t${block.timestamp}: pairbyIdandBlock(id:"${pairAddress}", blockNumber:"${block.number}") {
+    (block) => `t${block.timestamp}: pairbyIdandBlock(id:"${pairAddress}", blockNumber:"${block.number}") {
         token0Price
         token1Price
-      }
-    `
+      }`
   )
 
   queryString += '}'
@@ -817,7 +814,6 @@ export const TOKENS_HISTORICAL_BULK = (tokens) => {
     }
   }
   `
-  debugger
   return gql(queryString)
 }
 
