@@ -144,12 +144,16 @@ function PairPage({ pairAddress, history }) {
   const transactions = usePairTransactions(pairAddress)
   const backgroundColor = useColor(pairAddress)
 
-  const formattedLiquidity = reserveUSD ? formattedNum(reserveUSD / 10 ** 9, true) : formattedNum(trackedReserveUSD / 10 ** 9, true)
+  const formattedLiquidity = reserveUSD
+    ? formattedNum(reserveUSD / 10 ** 9, true)
+    : formattedNum(trackedReserveUSD / 10 ** 9, true)
   const usingUntrackedLiquidity = !trackedReserveUSD && !!reserveUSD
   const liquidityChange = formattedPercent(liquidityChangeUSD)
 
   // volume
-  const volume = !!oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : formattedNum(oneDayVolumeUntracked, true)
+  const volume = !!oneDayVolumeUSD
+    ? formattedNum(oneDayVolumeUSD / 10 ** 9, true)
+    : formattedNum(oneDayVolumeUntracked / 10 ** 9, true)
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUntracked
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUntracked)
 
@@ -159,8 +163,8 @@ function PairPage({ pairAddress, history }) {
   const fees =
     oneDayVolumeUSD || oneDayVolumeUSD === 0
       ? usingUtVolume
-        ? formattedNum(oneDayVolumeUntracked * 0.003, true)
-        : formattedNum(oneDayVolumeUSD * 0.003, true)
+        ? formattedNum((oneDayVolumeUntracked / 10 ** 9) * 0.003, true)
+        : formattedNum((oneDayVolumeUSD / 10 ** 9) * 0.003, true)
       : '-'
 
   // token data for usd
@@ -204,9 +208,10 @@ function PairPage({ pairAddress, history }) {
             <TYPE.light style={{ textAlign: 'center' }}>
               {BLOCKED_WARNINGS[pairAddress] ?? `This pair is not supported.`}
             </TYPE.light>
-            <Link external={true} href={'https://testnet.cspr.live/account/' + pairAddress}>{`More about ${shortenAddress(
-              pairAddress
-            )}`}</Link>
+            <Link
+              external={true}
+              href={'https://testnet.cspr.live/account/' + pairAddress}
+            >{`More about ${shortenAddress(pairAddress)}`}</Link>
           </AutoColumn>
         </BlockedMessageWrapper>
       </BlockedWrapper>
@@ -308,8 +313,9 @@ function PairPage({ pairAddress, history }) {
                   <TokenLogo address={token0?.id} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
                     {token0 && token1
-                      ? `1 ${formattedSymbol0} = ${token0Rate} ${formattedSymbol1} ${parseFloat(token0?.derivedETH) ? '(' + token0USD + ')' : ''
-                      }`
+                      ? `1 ${formattedSymbol0} = ${token0Rate} ${formattedSymbol1} ${
+                          parseFloat(token0?.derivedETH) ? '(' + token0USD + ')' : ''
+                        }`
                       : '-'}
                   </TYPE.main>
                 </RowFixed>
@@ -319,8 +325,9 @@ function PairPage({ pairAddress, history }) {
                   <TokenLogo address={token1?.id} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
                     {token0 && token1
-                      ? `1 ${formattedSymbol1} = ${token1Rate} ${formattedSymbol0}  ${parseFloat(token1?.derivedETH) ? '(' + token1USD + ')' : ''
-                      }`
+                      ? `1 ${formattedSymbol1} = ${token1Rate} ${formattedSymbol0}  ${
+                          parseFloat(token1?.derivedETH) ? '(' + token1USD + ')' : ''
+                        }`
                       : '-'}
                   </TYPE.main>
                 </RowFixed>
@@ -495,7 +502,11 @@ function PairPage({ pairAddress, history }) {
                     </AutoRow>
                   </Column>
                   <ButtonLight color={backgroundColor}>
-                    <Link color={backgroundColor} external href={'https://testnet.cspr.live/contract-package/' + pairAddress}>
+                    <Link
+                      color={backgroundColor}
+                      external
+                      href={'https://testnet.cspr.live/contract-package/' + pairAddress}
+                    >
                       View on Casper Live ↗
                     </Link>
                   </ButtonLight>

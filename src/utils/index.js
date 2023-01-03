@@ -325,6 +325,10 @@ export const isAddress = (value) => {
 }
 
 export const toK = (num) => {
+  if (num < 1) {
+    return num
+  }
+
   return Numeral(num).format('0.[00]a')
 }
 

@@ -261,8 +261,8 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
         ((parseFloat(positionT1.liquidityTokenBalance) / parseFloat(positionT1.liquidityTokenTotalSupply)) *
         parseFloat(positionT1.reserveUSD)) / 10 ** 9;
       const localReturns = getMetricsForPositionWindow(positionT0, positionT1)
-      const localFees = netFees + localReturns.fees
-
+      const localFees = (netFees + localReturns.fees) / 10 ** 9
+    
       formattedHistory.push({
         date: dayTimestamp,
         usdValue: currentLiquidityValue,

@@ -138,6 +138,7 @@ function PositionList({ positions }) {
   const [ethPrice] = useCsprPrice()
 
   const ListItem = ({ position, index }) => {
+    debugger
     const poolOwnership = position.liquidityTokenBalance / position.pair.totalSupply
     const valueUSD = poolOwnership * position.pair.reserveUSD
 
@@ -214,7 +215,7 @@ function PositionList({ positions }) {
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token0.derivedETH)
                       ? formattedNum(
-                          position?.fees.sum / (parseFloat(position.pair.token0.derivedETH / 10 ** 9) * ethPrice) / 2,
+                          position?.fees.sum / 10 ** 9 / (parseFloat(position.pair.token0.derivedETH) * ethPrice) / 2,
                           false,
                           true
                         )
@@ -231,7 +232,7 @@ function PositionList({ positions }) {
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token1.derivedETH)
                       ? formattedNum(
-                          position?.fees.sum / (parseFloat(position.pair.token1.derivedETH / 10 ** 9) * ethPrice) / 2,
+                          position?.fees.sum / 10 ** 9 / (parseFloat(position.pair.token1.derivedETH) * ethPrice) / 2,
                           false,
                           true
                         )

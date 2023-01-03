@@ -170,7 +170,8 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
   const ListItem = ({ pairAddress, index }) => {
     const pairData = pairs[pairAddress]
-    console.log("pairDatapairData", pairData);
+
+    console.log('pairDatapairData', pairData)
     if (pairData && pairData.token0 && pairData.token1) {
       const liquidity = formattedNum(
         !!pairData.trackedReserveUSD ? pairData.trackedReserveUSD / 10 ** 9 : pairData.reserveUSD / 10 ** 9,
@@ -178,25 +179,29 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
       )
 
       const volume = formattedNum(
-        pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked,
+        pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD / 10 ** 9 : pairData.oneDayVolumeUntracked / 10 ** 9,
         true
       )
 
       const apy = formattedPercent(
-        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * 0.003 * 365 * 100) /
-        (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD : pairData.reserveUSD)
+        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD / 10 ** 9 : pairData.oneDayVolumeUntracked / 10 ** 9) *
+          0.003 *
+          365 *
+          100) /
+          (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD / 10 ** 9 : pairData.reserveUSD / 10 ** 9)
       )
 
       const weekVolume = formattedNum(
-        pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked,
+        pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD / 10 ** 9 : pairData.oneWeekVolumeUntracked / 10 ** 9,
         true
       )
 
       const fees = formattedNum(
-        pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * 0.003 : pairData.oneDayVolumeUntracked * 0.003,
+        pairData.oneDayVolumeUSD
+          ? (pairData.oneDayVolumeUSD / 10 ** 9) * 0.003
+          : (pairData.oneDayVolumeUntracked / 10 ** 9) * 0.003,
         true
       )
-
 
       return (
         <DashGrid style={{ height: '48px' }} disbaleLinks={disbaleLinks} focus={true}>
@@ -217,10 +222,10 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
               />
             </CustomLink>
           </DataText>
-          <DataText area="liq">{formatDataText(liquidity, (pairData.trackedReserveUSD))}</DataText>
-          <DataText area="vol">{formatDataText(volume, (pairData.oneDayVolumeUSD))}</DataText>
-          {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, (pairData.oneWeekVolumeUSD))}</DataText>}
-          {!below1080 && <DataText area="fees">{formatDataText(fees, (pairData.fees))}</DataText>}
+          <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
+          <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
+          {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
+          {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.fees)}</DataText>}
           {!below1080 && (
             <DataText area="apy">
               {formatDataText(apy, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}

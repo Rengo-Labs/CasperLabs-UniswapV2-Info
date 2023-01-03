@@ -454,7 +454,7 @@ export const GLOBAL_DATA = (block) => {
 
 export const GLOBAL_DATA_PER_DAY = (block) => {
   const queryString = ` query uniswapdaydata {
-    uniswapdaydataByBlock(blockNumber : "${block}") {
+    uniswapFactorySnapshotByBlock(blockNumber : "${block}") {
         id
         totalVolumeUSD
         totalVolumeETH

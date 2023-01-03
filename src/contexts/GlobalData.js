@@ -272,7 +272,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       fetchPolicy: 'cache-first',
     })
     console.log('oneDayResult', oneDayResult)
-    oneDayData = oneDayResult.data.uniswapdaydataByBlock
+    oneDayData = oneDayResult.data.uniswapFactorySnapshotByBlock
 
     let twoDayResult = await v2client.query({
       query: GLOBAL_DATA_PER_DAY(
@@ -282,7 +282,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       fetchPolicy: 'cache-first',
     })
     console.log('twoDayResult', twoDayResult)
-    twoDayData = twoDayResult.data.uniswapdaydataByBlock
+    twoDayData = twoDayResult.data.uniswapFactorySnapshotByBlock
 
     let oneWeekResult = await v2client.query({
       query: GLOBAL_DATA_PER_DAY(
@@ -292,7 +292,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       fetchPolicy: 'cache-first',
     })
     console.log('oneWeekResult', oneWeekResult)
-    const oneWeekData = oneWeekResult.data.uniswapdaydataByBlock
+    const oneWeekData = oneWeekResult.data.uniswapFactorySnapshotByBlock
 
     let twoWeekResult = await v2client.query({
       query: GLOBAL_DATA_PER_DAY(
@@ -302,7 +302,7 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       fetchPolicy: 'cache-first',
     })
     console.log('twoWeekResult', twoWeekResult)
-    const twoWeekData = twoWeekResult.data.uniswapdaydataByBlock
+    const twoWeekData = twoWeekResult.data.uniswapFactorySnapshotByBlock
 
     if (data && oneDayData && twoDayData) {
       let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
