@@ -138,8 +138,9 @@ function PositionList({ positions }) {
   const [ethPrice] = useCsprPrice()
 
   const ListItem = ({ position, index }) => {
+    debugger
     const poolOwnership = position.liquidityTokenBalance / position.pair.totalSupply
-    const valueUSD = poolOwnership * position.pair.reserveUSD / 10 ** 9
+    const valueUSD = poolOwnership * position.pair.reserveUSD
 
     return (
       <DashGrid style={{ opacity: poolOwnership > 0 ? 1 : 0.6 }} focus={true}>
@@ -214,10 +215,10 @@ function PositionList({ positions }) {
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token0.derivedETH)
                       ? formattedNum(
-                        position?.fees.sum / (parseFloat(position.pair.token0.derivedETH / 10 ** 9) * ethPrice) / 2,
-                        false,
-                        true
-                      )
+                          position?.fees.sum / 10 ** 9 / (parseFloat(position.pair.token0.derivedETH) * ethPrice) / 2,
+                          false,
+                          true
+                        )
                       : 0}{' '}
                   </TYPE.small>
                   <FormattedName
@@ -231,10 +232,10 @@ function PositionList({ positions }) {
                   <TYPE.small fontWeight={400}>
                     {parseFloat(position.pair.token1.derivedETH)
                       ? formattedNum(
-                        position?.fees.sum / (parseFloat(position.pair.token1.derivedETH / 10 ** 9) * ethPrice) / 2,
-                        false,
-                        true
-                      )
+                          position?.fees.sum / 10 ** 9 / (parseFloat(position.pair.token1.derivedETH) * ethPrice) / 2,
+                          false,
+                          true
+                        )
                       : 0}{' '}
                   </TYPE.small>
                   <FormattedName

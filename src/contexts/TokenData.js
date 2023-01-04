@@ -3,12 +3,14 @@ import React, { createContext, useContext, useReducer, useMemo, useCallback, use
 import { v2client } from '../apollo/client'
 import {
   TOKEN_DATA,
+  TOKEN_DATA_BY_BLOCK,
   FILTERED_TRANSACTIONS,
   TOKEN_CHART,
   TOKEN_TOP_DAY_DATAS,
   PRICES_BY_BLOCK,
   PAIR_DATA,
   TOKENS_HISTORICAL_BULK,
+  TOKENS_HISTORICAL_BULK_BY_BLOCK,
 } from '../apollo/v3queries'
 
 import { useCsprPrice } from './GlobalData'
@@ -64,7 +66,6 @@ function reducer(state, { type, payload }) {
       let added = {}
       topTokens &&
         topTokens.map((token) => {
-
           return (added[token.id] = token)
         })
       return {
@@ -232,10 +233,10 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
   try {
     // need to get the top tokens by liquidity by need token day datas
     const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
-    console.log("currentDate", currentDate);
-    console.log("utcOneDayBack", utcOneDayBack);
-    console.log("utcTwoDaysBack", utcTwoDaysBack);
-    const date = "1656335816";
+    console.log('currentDate', currentDate)
+    console.log('utcOneDayBack', utcOneDayBack)
+    console.log('utcTwoDaysBack', utcTwoDaysBack)
+    const date = '1656335816'
     // console.log(date);
     // let tokenids = await client.query({
     //   query: TOKEN_TOP_DAY_DATAS,
@@ -249,7 +250,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
     })
 
     // console.log("tokenids", tokenids);
-    console.log("tokenids2", tokenids2);
+    console.log('tokenids2', tokenids2)
     // const ids = tokenids?.data?.tokenDayDatas?.reduce((accum, entry) => {
     //   accum.push(entry.id.slice(0, 42))
     //   return accum
@@ -271,35 +272,34 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
       query: TOKENS_HISTORICAL_BULK(ids2),
       fetchPolicy: 'cache-first',
     })
-    console.log("TOKENS_HISTORICAL_BULK", current2);
+    console.log('TOKENS_HISTORICAL_BULK', current2)
     let oneDayResult = await v2client.query({
-      query: TOKENS_HISTORICAL_BULK(ids2, oneDayBlock),
+      query: TOKENS_HISTORICAL_BULK_BY_BLOCK(ids2, oneDayBlock),
       fetchPolicy: 'cache-first',
     })
     // console.log("oneDayResult", oneDayResult);
 
     let twoDayResult = await v2client.query({
-      query: TOKENS_HISTORICAL_BULK(ids2, twoDayBlock),
+      query: TOKENS_HISTORICAL_BULK_BY_BLOCK(ids2, twoDayBlock),
       fetchPolicy: 'cache-first',
     })
-    console.log("twoDayResult", twoDayResult);
+    console.log('twoDayResult', twoDayResult)
 
-
-    let oneDayData = oneDayResult?.data?.tokensbyId.reduce((obj, cur, i) => {
+    let oneDayData = oneDayResult?.data?.tokensByIdsandBlock.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
-    let twoDayData = twoDayResult?.data?.tokensbyId.reduce((obj, cur, i) => {
+    let twoDayData = twoDayResult?.data?.tokensByIdsandBlock.reduce((obj, cur, i) => {
       return { ...obj, [cur.id]: cur }
     }, {})
-    console.log("oneDayData", oneDayData);
-    console.log("twoDayData", twoDayData);
+    console.log('oneDayData', oneDayData)
+    console.log('twoDayData', twoDayData)
     let bulkResults = await Promise.all(
       current2 &&
       oneDayData &&
       twoDayData &&
-      current2?.data?.tokensbyId.map(async (token) => {
+      current2?.data?.tokensbyIds.map(async (token) => {
         let data = token
-        console.log("data", data);
+        console.log('data', data)
 
         // let liquidityDataThisToken = liquidityData?.[token.id]
         let oneDayHistory = oneDayData?.[token.id]
@@ -311,14 +311,14 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
             query: TOKEN_DATA(token.id),
             fetchPolicy: 'cache-first',
           })
-          oneDayHistory = oneDayResult.data.tokenbyId
+          oneDayHistory = oneDayResult.data.tokenbyIdandBlock
         }
         if (!twoDayHistory) {
           let twoDayResult = await v2client.query({
             query: TOKEN_DATA(token.id),
             fetchPolicy: 'cache-first',
           })
-          twoDayHistory = twoDayResult.data.tokenbyId
+          twoDayHistory = twoDayResult.data.tokenbyIdandBlock
         }
 
         // calculate percentage changes and daily changes
@@ -327,7 +327,7 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
           oneDayHistory?.tradeVolumeUSD ?? 0,
           twoDayHistory?.tradeVolumeUSD ?? 0
         )
-        console.log("oneDayVolumeUSDoneDayVolumeUSD", oneDayVolumeUSD);
+        console.log('oneDayVolumeUSDoneDayVolumeUSD', oneDayVolumeUSD)
         const [oneDayTxns, txnChange] = get2DayPercentChange(
           data.txCount,
           oneDayHistory?.txCount ?? 0,
@@ -336,7 +336,8 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
 
         const currentLiquidityUSD = data?.totalLiquidity * ethPrice * data?.derivedETH
         const oldLiquidityUSD = oneDayHistory?.totalLiquidity * ethPriceOld * oneDayHistory?.derivedETH
-
+        console.log("currentLiquidityUSD", currentLiquidityUSD);
+        console.log("oldLiquidityUSD", oldLiquidityUSD);
         // percent changes
         const priceChangeUSD = getPercentChange(
           data?.derivedETH * ethPrice,
@@ -365,20 +366,21 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
           token0: data,
         })
 
-        console.log("datadatadata", data);
+        console.log('datadatadata', data)
         // HOTFIX for Aave
-        if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
-          const aaveData = await v2client.query({
-            query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
-            fetchPolicy: 'cache-first',
-          })
-          console.log("aaveData", aaveData);
-          const result = aaveData.data.pairbyId[0]
-          console.log("result", result);
-          data.totalLiquidityUSD = parseFloat(result.reserveUSD) / 2
-          data.liquidityChangeUSD = 0
-          data.priceChangeUSD = 0
-        }
+
+        // if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+        //   const aaveData = await v2client.query({
+        //     query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
+        //     fetchPolicy: 'cache-first',
+        //   })
+        //   console.log('aaveData', aaveData)
+        //   const result = aaveData.data.pairbyId[0]
+        //   console.log('result', result)
+        //   data.totalLiquidityUSD = parseFloat(result.reserveUSD) / 2
+        //   data.liquidityChangeUSD = 0
+        //   data.priceChangeUSD = 0
+        // }
 
         // used for custom adjustments
         data.oneDayData = oneDayHistory
@@ -400,8 +402,8 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
   const utcCurrentTime = dayjs()
   const utcOneDayBack = utcCurrentTime.subtract(1, 'day').startOf('minute').unix()
   const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').startOf('minute').unix()
-  // let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
-  // let twoDayBlock = await getBlockFromTimestamp(utcTwoDaysBack)
+  let oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
+  let twoDayBlock = await getBlockFromTimestamp(utcTwoDaysBack)
 
   // initialize data arrays
   let data = {}
@@ -415,24 +417,24 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
       query: TOKEN_DATA(address),
       fetchPolicy: 'cache-first',
     })
-    console.log("TOKEN_DATA", result);
-    data = result?.data?.tokenbyId;
+    console.log('TOKEN_DATA', result)
+    data = result?.data?.tokenbyIdandBlock
     // console.log("data", data);
     // get results from 24 hours in past
     let oneDayResult = await v2client.query({
-      query: TOKEN_DATA(address),
+      query: TOKEN_DATA_BY_BLOCK(address, oneDayBlock),
       fetchPolicy: 'cache-first',
     })
     // console.log("oneDayResult", oneDayResult);
-    oneDayData = oneDayResult.data.tokenbyId
+    oneDayData = oneDayResult.data.tokenbyIdandBlock
     // console.log("oneDayDataoneDayData", oneDayData);
 
     // // get results from 48 hours in past
     let twoDayResult = await v2client.query({
-      query: TOKEN_DATA(address),
+      query: TOKEN_DATA_BY_BLOCK(address, twoDayBlock),
       fetchPolicy: 'cache-first',
     })
-    twoDayData = twoDayResult.data.tokenbyId
+    twoDayData = twoDayResult.data.tokenbyIdandBlock
 
     // catch the case where token wasnt in top list in previous days
     if (!oneDayData) {
@@ -440,14 +442,14 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
         query: TOKEN_DATA(address),
         fetchPolicy: 'cache-first',
       })
-      oneDayData = oneDayResult.data.tokenbyId
+      oneDayData = oneDayResult.data.tokenbyIdandBlock
     }
     if (!twoDayData) {
       let twoDayResult = await v2client.query({
         query: TOKEN_DATA(address),
         fetchPolicy: 'cache-first',
       })
-      twoDayData = twoDayResult.data.tokenbyId
+      twoDayData = twoDayResult.data.tokenbyIdandBlock
     }
 
     // calculate percentage changes and daily changes
@@ -510,18 +512,19 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
 
     // HOTFIX for Aave
     // console.log("datadatadata", data);
-    if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
-      const aaveData = await v2client.query({
-        query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
-        fetchPolicy: 'cache-first',
-      })
-      // console.log("resultttttttttttttttttttt", aaveData);
-      const result = aaveData.data.pairbyId[0]
-      // console.log("resultttttttttttttttttttt", result);
-      data.totalLiquidityUSD = parseFloat(result.reserveUSD) / 2
-      data.liquidityChangeUSD = 0
-      data.priceChangeUSD = 0
-    }
+
+    // if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+    //   const aaveData = await v2client.query({
+    //     query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
+    //     fetchPolicy: 'cache-first',
+    //   })
+    //   // console.log("resultttttttttttttttttttt", aaveData);
+    //   const result = aaveData.data.pairbyId[0]
+    //   // console.log("resultttttttttttttttttttt", result);
+    //   data.totalLiquidityUSD = parseFloat(result.reserveUSD) / 2
+    //   data.liquidityChangeUSD = 0
+    //   data.priceChangeUSD = 0
+    // }
   } catch (e) {
     console.log(e)
   }
@@ -539,7 +542,7 @@ const getTokenTransactions = async (allPairsFormatted) => {
       },
       fetchPolicy: 'cache-first',
     })
-    console.log("FILTERED_TRANSACTIONS", result);
+    console.log('FILTERED_TRANSACTIONS', result)
     transactions.mints = result.data.mintsallpairs
     transactions.burns = result.data.burnsallpairs
     transactions.swaps = result.data.swapsallpairs
@@ -556,7 +559,7 @@ const getTokenPairs = async (tokenAddress) => {
       query: TOKEN_DATA(tokenAddress),
       fetchPolicy: 'cache-first',
     })
-    console.log("TOKEN_DATATOKEN_DATA", result);
+    console.log('TOKEN_DATATOKEN_DATA', result)
     return result.data?.['pairs0'].concat(result.data?.['pairs1'])
   } catch (e) {
     console.log(e)
@@ -585,6 +588,8 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
   try {
     blocks = await getBlocksFromTimestamps(timestamps, 100)
 
+    blocks = blocks.filter((block) => block.number && block.timestamp)
+
     // catch failing case
     if (!blocks || blocks.length === 0) {
       return []
@@ -595,8 +600,10 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
         return parseFloat(b.number) <= parseFloat(latestBlock)
       })
     }
+
     // console.log("tokenAddresstokenAddresstokenAddress", tokenAddress);
     let result = await splitQuery(PRICES_BY_BLOCK, v2client, [tokenAddress], blocks, 50)
+
     // console.log("fetchedDeta", result);
     // console.log("result", result);
     // format token ETH price results
@@ -604,7 +611,7 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
     for (var row in result) {
       let timestamp = row.split('t')[1]
       let derivedETH = parseFloat(result[row]?.derivedETH)
-      if (timestamp) {
+      if (timestamp && result[row]) {
         values.push({
           timestamp,
           derivedETH,
@@ -616,7 +623,7 @@ const getIntervalTokenData = async (tokenAddress, startTime, interval = 3600, la
     let index = 0
     for (var brow in result) {
       let timestamp = brow.split('b')[1]
-      if (timestamp) {
+      if (timestamp && result[brow]) {
         values[index].priceUSD = result[brow].ethPrice * values[index].derivedETH
         index += 1
       }
@@ -659,16 +666,17 @@ const getTokenChartData = async (tokenAddress) => {
         },
         fetchPolicy: 'cache-first',
       })
-      console.log("TOKEN_CHART", result);
+      console.log('TOKEN_CHART', result)
       if (result.data.tokendaydatas.length < 1000) {
         allFound = true
       }
       for (let index = 0; index < result.data.tokendaydatas.length; index++) {
         // result.data.tokendaydatas[index].reserveUSDValue = result.data.tokendaydatas[index].reserveUSD / 10 ** 9;
-        result.data.tokendaydatas[index].dailyVolumeUSDValue = result.data.tokendaydatas[index].dailyVolumeUSD / 10 ** 9;
-        result.data.tokendaydatas[index].totalLiquidityUSDValue = result.data.tokendaydatas[index].totalLiquidityUSD / 10 ** 9;
-        result.data.tokendaydatas[index].totalLiquidityTokenValue = result.data.tokendaydatas[index].totalLiquidityToken / 10 ** 9;
-
+        result.data.tokendaydatas[index].dailyVolumeUSDValue = result.data.tokendaydatas[index].dailyVolumeUSD / 10 ** 9
+        result.data.tokendaydatas[index].totalLiquidityUSDValue =
+          result.data.tokendaydatas[index].totalLiquidityUSD / 10 ** 9
+        result.data.tokendaydatas[index].totalLiquidityTokenValue =
+          result.data.tokendaydatas[index].totalLiquidityToken / 10 ** 9
       }
 
       skip += 1000
@@ -730,6 +738,7 @@ export function Updater() {
     async function getData() {
       // get top pairs for overview list
       let topTokens = await getTopTokens(ethPrice, ethPriceOld)
+
       topTokens && updateTopTokens(topTokens)
     }
     ethPrice && ethPriceOld && getData()
@@ -743,10 +752,9 @@ export function useTokenData(tokenAddress) {
   const tokenData = state?.[tokenAddress]
 
   useEffect(() => {
-    if (!tokenData && ethPrice && ethPriceOld
-      // && isAddress(tokenAddress)
-    ) {
+    if (!tokenData && ethPrice && ethPriceOld && isAddress(tokenAddress)) {
       // console.log("tokenAddresstokenAddress", tokenAddress);
+      // if (tokenAddress)
       getTokenData(tokenAddress, ethPrice, ethPriceOld).then((data) => {
         update(tokenAddress, data)
       })
@@ -789,7 +797,8 @@ export function useTokenPairs(tokenAddress) {
       let allPairs = await getTokenPairs(tokenAddress)
       updateAllPairs(tokenAddress, allPairs)
     }
-    if (!tokenPairs
+    if (
+      !tokenPairs
       // && isAddress(tokenAddress)
     ) {
       fetchData()
