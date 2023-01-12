@@ -4,7 +4,7 @@ import { HttpLink } from 'apollo-link-http'
 
 export const v2client = new ApolloClient({
   link: new HttpLink({
-    uri: 'http://infographqlbackendfinalized-env.eba-36txdbap.us-east-1.elasticbeanstalk.com/graphql',
+    uri: 'https://graphqlbackendfinalizeduref-env.eba-x9i9dyvj.us-east-1.elasticbeanstalk.com/graphql',
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,

@@ -369,9 +369,9 @@ const getTopTokens = async (ethPrice, ethPriceOld) => {
         console.log('datadatadata', data)
         // HOTFIX for Aave
 
-        // if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+        // if (data.id === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a') {
         //   const aaveData = await v2client.query({
-        //     query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
+        //     query: PAIR_DATA('a3f3a7c26a0723f56ad74dcb4d9a86642d1d53c6d1add00c237df5199a3025e6'),
         //     fetchPolicy: 'cache-first',
         //   })
         //   console.log('aaveData', aaveData)
@@ -513,9 +513,9 @@ const getTokenData = async (address, ethPrice, ethPriceOld) => {
     // HOTFIX for Aave
     // console.log("datadatadata", data);
 
-    // if (data.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+    // if (data.id === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a') {
     //   const aaveData = await v2client.query({
-    //     query: PAIR_DATA('473ec5a079b46eb725d98d6809deda5d98a99e4b6b4213aa420918a6cd1ffa76'),
+    //     query: PAIR_DATA('a3f3a7c26a0723f56ad74dcb4d9a86642d1d53c6d1add00c237df5199a3025e6'),
     //     fetchPolicy: 'cache-first',
     //   })
     //   // console.log("resultttttttttttttttttttt", aaveData);

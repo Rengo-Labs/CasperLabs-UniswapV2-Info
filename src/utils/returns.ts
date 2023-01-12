@@ -41,10 +41,10 @@ function formatPricesForEarlyTimestamps(position): Position {
       position.token1PriceUSD = 1
     }
     // WETH price
-    if (position.pair?.token0.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+    if (position.pair?.token0.id === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a') {
       position.token0PriceUSD = 203
     }
-    if (position.pair?.token1.id === '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184') {
+    if (position.pair?.token1.id === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a') {
       position.token1PriceUSD = 203
     }
   }
@@ -99,7 +99,7 @@ async function getPrincipalForUserPerPair(user: string, pairAddress: string) {
     amount0 -= parseFloat(burn.amount0)
     amount1 -= parseFloat(burn.amount1)
   }
-;
+  ;
   return { usd, amount0, amount1 }
 }
 
@@ -259,10 +259,10 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
       positionT1.liquidityTokenBalance = positionT0.liquidityTokenBalance
       const currentLiquidityValue =
         ((parseFloat(positionT1.liquidityTokenBalance) / parseFloat(positionT1.liquidityTokenTotalSupply)) *
-        parseFloat(positionT1.reserveUSD)) / 10 ** 9;
+          parseFloat(positionT1.reserveUSD)) / 10 ** 9;
       const localReturns = getMetricsForPositionWindow(positionT0, positionT1)
       const localFees = (netFees + localReturns.fees) / 10 ** 9
-    
+
       formattedHistory.push({
         date: dayTimestamp,
         usdValue: currentLiquidityValue,
@@ -282,7 +282,7 @@ export async function getHistoricalPairReturns(startDateTimestamp, currentPairDa
  */
 export async function getLPReturnsOnPair(user: string, pair, csprPrice: number, snapshots) {
   // initialize values
-  
+
   const principal = await getPrincipalForUserPerPair(user, pair.id)
   let hodlReturn = 0
   let netReturn = 0
@@ -293,7 +293,7 @@ export async function getLPReturnsOnPair(user: string, pair, csprPrice: number, 
     return entry.pair.id === pair.id
   })
 
-  ;
+    ;
   // get data about the current position
   const currentPosition: Position = {
     pair,
@@ -306,7 +306,7 @@ export async function getLPReturnsOnPair(user: string, pair, csprPrice: number, 
     token1PriceUSD: pair.token1.derivedETH * csprPrice,
   }
 
-  ;
+    ;
   for (const index in snapshots) {
     // get positions at both bounds of the window
     // console.log("index", index);

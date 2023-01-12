@@ -33,10 +33,10 @@ const UPDATE_ALL_TOKENS_IN_UNISWAP = 'UPDATE_ALL_TOKENS_IN_UNISWAP'
 const UPDATE_TOP_LPS = 'UPDATE_TOP_LPS'
 
 const offsetVolumes = [
-  // '2fe40811142207abea18359e0dbdf9a15ea93a8035a293386b4cd8eb5aace184',
-  // '03e3e09b28dc4d41a4507b38073e7a1641becc0b40e79beb72733d2fb022defa',
+  '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a',
+  '28eed3da2b123334c7913d84c4aea0ed426fd268d29410cb12c6bc8a453183f6',
   // "bdcd8c9844cd2f98c81b3f98ce806f20c5a625f954d7b29bf70626fef060ff1f",
-  // '6603c25b9abcac478c0c2d0201b161f3bb0a498185aa771c6ce06e26f345dfc1',
+  '4a2e5b5169b756d571e5014baf9bb76deb5b780509e8db17fb80ed6251204deb',
   // '0x05934eba98486693aaec2d00b0e9ce918e37dc3f',
   // '0x3d7e683fc9c86b4d653c9e47ca12517440fad14e',
   // '0xfae9c647ad7d89e738aba720acf09af93dc535f7',
@@ -781,7 +781,7 @@ export function useTopLps() {
             if (results) {
               return results.liquiditypositions
             }
-          } catch (e) {}
+          } catch (e) { }
         })
       )
 
