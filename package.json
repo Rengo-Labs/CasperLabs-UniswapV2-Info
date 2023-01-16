@@ -3,8 +3,7 @@
   "private": true,
   "homepage": "https://casper-uniswap-v2-info.herokuapp.com/",
   "engines": {
-    "node": "14.19.0",
-    "npm": "8.19.2"
+    "node": "19.4.0"
   },
   "devDependencies": {
     "@popperjs/core": "^2.4.2",
