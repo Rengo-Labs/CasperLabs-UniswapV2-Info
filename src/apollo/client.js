@@ -12,7 +12,7 @@ export const v2client = new ApolloClient({
 
 export const blockClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'http://blockclientgraphqlbackend-env.eba-w5pmuset.us-east-1.elasticbeanstalk.com/graphql',
+    uri: 'https://blockclientgraphqlbackend-env.eba-w5pmuset.us-east-1.elasticbeanstalk.com/graphql',
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,
