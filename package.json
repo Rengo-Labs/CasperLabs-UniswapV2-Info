@@ -2,6 +2,9 @@
   "name": "@uniswap/info",
   "private": true,
   "homepage": "https://casper-uniswap-v2-info.herokuapp.com/",
+  "engines": {
+    "node": "16.x"
+  },
   "devDependencies": {
     "@popperjs/core": "^2.4.2",
     "@reach/portal": "^0.10.3",
