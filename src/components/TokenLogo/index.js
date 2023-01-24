@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { isAddress } from '../../utils/index.js'
-import EthereumLogo from '../../assets/cspr.png'
-import CSPR from '../../assets/cspr.png'
+import { default as CSPR, default as EthereumLogo } from '../../assets/cspr.png'
+import { tokens } from './TokenLogoHelper/tokenDetails.js'
 
 const BAD_IMAGES = {}
 
@@ -42,9 +42,11 @@ const StyledCSPR = styled.div`
   }
 `
 
-export default function TokenLogo({ address, header = false, size = '24px', ...rest }) {
+export default function TokenLogo({ address, symbol, header = false, size = '24px', ...rest }) {
+  console.log("symbolsymbol", symbol);
   const [error, setError] = useState(false)
-
+  // const myList = generateMyTokenList();
+  // console.log("TokenList", TokenList);
   useEffect(() => {
     setError(false)
   }, [address])
@@ -94,13 +96,14 @@ export default function TokenLogo({ address, header = false, size = '24px', ...r
 
   // const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address
   //   }/logo.png`
-
+  let index = tokens.findIndex(x => x.symbol === symbol);
+  console.log("indexindex", index);
   return (
     <Inline>
       <Image
         {...rest}
         alt={''}
-        src={CSPR}
+        src={index == -1 ? CSPR : tokens[index].logoURI}
         size={size}
         onError={(event) => {
           BAD_IMAGES[address] = true
