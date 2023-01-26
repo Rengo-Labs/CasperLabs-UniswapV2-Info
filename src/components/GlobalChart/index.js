@@ -29,7 +29,9 @@ const GlobalChart = ({ display }) => {
 
   // global historical data
   const [dailyData, weeklyData] = useGlobalChartData()
-  // console.log("dailyData", dailyData);
+  for (let i = 0; i < dailyData.length; i++) {
+    dailyData[i].totalLiquidityUSDValue = dailyData[i].totalLiquidityUSD / 10 ** 9;
+  }
   const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD, oneWeekVolume, weeklyVolumeChange } =
     useGlobalData()
 
@@ -56,7 +58,6 @@ const GlobalChart = ({ display }) => {
   }, [dailyData, utcStartTime, volumeWindow, weeklyData])
   const below800 = useMedia('(max-width: 800px)')
 
-  // console.log("chartDataFiltered", chartDataFiltered);
   // update the width on a window resize
   const ref = useRef()
   const isClient = typeof window === 'object'
@@ -81,13 +82,13 @@ const GlobalChart = ({ display }) => {
       {chartDataFiltered && chartView === CHART_VIEW.LIQUIDITY && (
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingViewChart
+            type={CHART_TYPES.AREA}
             data={dailyData}
             base={totalLiquidityUSD / 10 ** 9}
             baseChange={liquidityChangeUSD}
             title="Liquidity"
             field="totalLiquidityUSDValue"
             width={width}
-            type={CHART_TYPES.AREA}
           />
         </ResponsiveContainer>
       )}

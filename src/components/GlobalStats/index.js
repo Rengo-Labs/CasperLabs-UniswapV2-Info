@@ -30,7 +30,7 @@ export default function GlobalStats() {
   const { oneDayVolumeUSD, oneDayTxns, pairCount } = useGlobalData()
   const [ethPrice] = useCsprPrice()
   const formattedEthPrice = ethPrice ? formattedNum(ethPrice, true) : '-'
-  const oneDayFees = oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD * 0.003, true) : ''
+  const oneDayFees = oneDayVolumeUSD ? formattedNum((oneDayVolumeUSD / 10 ** 9) * 0.003, true) : ''
 
   return (
     <Header>

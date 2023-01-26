@@ -28,8 +28,8 @@ const TradingViewChart = ({
   data,
   base,
   baseChange,
-  field,
   title,
+  field,
   width,
   useWeekly = false,
 }) => {
@@ -39,7 +39,6 @@ const TradingViewChart = ({
   // pointer to the chart object
   const [chartCreated, setChartCreated] = useState(false)
   const dataPrev = usePrevious(data)
-
   useEffect(() => {
     if (data !== dataPrev && chartCreated && type === CHART_TYPES.BAR) {
       // remove the tooltip element
@@ -52,13 +51,13 @@ const TradingViewChart = ({
   }, [chartCreated, data, dataPrev, type])
 
   // parese the data and format for tardingview consumption
-  const formattedData = data?.map((entry) => {
+  const formattedData0 = data?.map((entry) => {
     return {
       time: dayjs.unix(entry.date).utc().format('YYYY-MM-DD'),
       value: parseFloat(entry[field]),
     }
   })
-
+  const formattedData = formattedData0.filter((v, i, a) => a.findIndex(v2 => (v2.time === v.time)) === i)
   // adjust the scale based on the type of chart
   const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2
 
@@ -235,7 +234,6 @@ const TradingViewChart = ({
       chartCreated && chartCreated.timeScale().scrollToPosition(0)
     }
   }, [chartCreated, width])
-
   return (
     <Wrapper>
       <div ref={ref} id={'test-id' + type} />
