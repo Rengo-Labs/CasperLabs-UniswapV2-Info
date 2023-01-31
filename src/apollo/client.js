@@ -4,7 +4,7 @@ import { HttpLink } from 'apollo-link-http'
 
 export const v2client = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://graphqlbackendfinalizeduref-env.eba-x9i9dyvj.us-east-1.elasticbeanstalk.com/graphql',
+    uri: 'https://info-api-test.casperswap.xyz/graphql',
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,
@@ -12,7 +12,7 @@ export const v2client = new ApolloClient({
 
 export const blockClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://blockclientgraphqlbackend-env.eba-w5pmuset.us-east-1.elasticbeanstalk.com/graphql',
+    uri: `https://block-api-test.casperswap.xyz/graphql`,
   }),
   cache: new InMemoryCache(),
   shouldBatch: true,

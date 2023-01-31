@@ -393,7 +393,9 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       // for each day, parse the daily volume and format for chart array
       data.forEach((dayData, i) => {
         // add the day index to the set of days
-        dayIndexSet.add((data[i].date / oneDay).toFixed(0))
+        console.log("data[i].date / oneDay", data[i].date / oneDay);
+        console.log("data[i].date / oneDay", Math.floor(data[i].date / oneDay));
+        dayIndexSet.add(Math.floor(data[i].date / oneDay))
         dayIndexArray.push(data[i])
         dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
         dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSD / 10 ** 9)
@@ -401,14 +403,20 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
 
       // fill in empty days ( there will be no day datas if no trades made that day )
       let timestamp = data[0].date ? data[0].date : oldestDateToFetch
-      // console.log("timestamp", timestamp);
+      console.log("data[0]", data);
+      console.log("dayIndexArray", dayIndexArray);
       let latestLiquidityUSD = data[0].totalLiquidityUSD
       let latestDayDats = data[0].mostLiquidTokens
       let index = 1
+      console.log("timestamp", timestamp);
+      console.log("utcEndTime.unix()", utcEndTime.unix());
+      console.log("oneDay", oneDay);
+      console.log("utcEndTime.unix() - oneDay", utcEndTime.unix() - oneDay);
+      console.log("dayIndexSet", dayIndexSet);
       while (timestamp < utcEndTime.unix() - oneDay) {
         const nextDay = timestamp + oneDay
-        let currentDayIndex = (nextDay / oneDay).toFixed(0)
-
+        let currentDayIndex = Math.floor(nextDay / oneDay)
+        console.log("index", index);
         if (!dayIndexSet.has(currentDayIndex)) {
           data.push({
             date: nextDay,
@@ -688,7 +696,7 @@ export function useGlobalChartData() {
     async function fetchData() {
       // historical stuff for chart
       let [newChartData, newWeeklyData] = await getChartData(oldestDateFetch, combinedData)
-      // console.log("newChartData", newChartData);
+      console.log("newChartData", newChartData);
       updateChart(newChartData, newWeeklyData)
     }
     if (oldestDateFetch && !(chartDataDaily && chartDataWeekly) && combinedData) {
@@ -696,7 +704,7 @@ export function useGlobalChartData() {
     }
   }, [chartDataDaily, chartDataWeekly, combinedData, oldestDateFetch, updateChart])
 
-  // console.log("chartDataDaily", chartDataDaily);
+  console.log("chartDataDaily", chartDataDaily);
   // console.log("chartDataWeekly", chartDataWeekly);
   return [chartDataDaily, chartDataWeekly]
 }
