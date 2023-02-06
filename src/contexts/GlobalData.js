@@ -33,10 +33,10 @@ const UPDATE_ALL_TOKENS_IN_UNISWAP = 'UPDATE_ALL_TOKENS_IN_UNISWAP'
 const UPDATE_TOP_LPS = 'UPDATE_TOP_LPS'
 
 const offsetVolumes = [
-  '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a',
-  '28eed3da2b123334c7913d84c4aea0ed426fd268d29410cb12c6bc8a453183f6',
+  // '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a',
+  // '28eed3da2b123334c7913d84c4aea0ed426fd268d29410cb12c6bc8a453183f6',
   // "bdcd8c9844cd2f98c81b3f98ce806f20c5a625f954d7b29bf70626fef060ff1f",
-  '4a2e5b5169b756d571e5014baf9bb76deb5b780509e8db17fb80ed6251204deb',
+  // '4a2e5b5169b756d571e5014baf9bb76deb5b780509e8db17fb80ed6251204deb',
   // '0x05934eba98486693aaec2d00b0e9ce918e37dc3f',
   // '0x3d7e683fc9c86b4d653c9e47ca12517440fad14e',
   // '0xfae9c647ad7d89e738aba720acf09af93dc535f7',
@@ -393,7 +393,9 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
       // for each day, parse the daily volume and format for chart array
       data.forEach((dayData, i) => {
         // add the day index to the set of days
-        dayIndexSet.add((data[i].date / oneDay).toFixed(0))
+        console.log("data[i].date / oneDay", data[i].date / oneDay);
+        console.log("data[i].date / oneDay", Math.floor(data[i].date / oneDay));
+        dayIndexSet.add(Math.floor(data[i].date / oneDay))
         dayIndexArray.push(data[i])
         dayData.dailyVolumeUSD = parseFloat(dayData.dailyVolumeUSD)
         dayData.dailyVolumeUSDValue = parseFloat(dayData.dailyVolumeUSD / 10 ** 9)
@@ -401,14 +403,20 @@ const getChartData = async (oldestDateToFetch, offsetData) => {
 
       // fill in empty days ( there will be no day datas if no trades made that day )
       let timestamp = data[0].date ? data[0].date : oldestDateToFetch
-      // console.log("timestamp", timestamp);
+      console.log("data[0]", data);
+      console.log("dayIndexArray", dayIndexArray);
       let latestLiquidityUSD = data[0].totalLiquidityUSD
       let latestDayDats = data[0].mostLiquidTokens
       let index = 1
+      console.log("timestamp", timestamp);
+      console.log("utcEndTime.unix()", utcEndTime.unix());
+      console.log("oneDay", oneDay);
+      console.log("utcEndTime.unix() - oneDay", utcEndTime.unix() - oneDay);
+      console.log("dayIndexSet", dayIndexSet);
       while (timestamp < utcEndTime.unix() - oneDay) {
         const nextDay = timestamp + oneDay
-        let currentDayIndex = (nextDay / oneDay).toFixed(0)
-
+        let currentDayIndex = Math.floor(nextDay / oneDay)
+        console.log("index", index);
         if (!dayIndexSet.has(currentDayIndex)) {
           data.push({
             date: nextDay,
@@ -688,7 +696,7 @@ export function useGlobalChartData() {
     async function fetchData() {
       // historical stuff for chart
       let [newChartData, newWeeklyData] = await getChartData(oldestDateFetch, combinedData)
-      // console.log("newChartData", newChartData);
+      console.log("newChartData", newChartData);
       updateChart(newChartData, newWeeklyData)
     }
     if (oldestDateFetch && !(chartDataDaily && chartDataWeekly) && combinedData) {
@@ -696,7 +704,7 @@ export function useGlobalChartData() {
     }
   }, [chartDataDaily, chartDataWeekly, combinedData, oldestDateFetch, updateChart])
 
-  // console.log("chartDataDaily", chartDataDaily);
+  console.log("chartDataDaily", chartDataDaily);
   // console.log("chartDataWeekly", chartDataWeekly);
   return [chartDataDaily, chartDataWeekly]
 }

@@ -43,7 +43,6 @@ const StyledCSPR = styled.div`
 `
 
 export default function TokenLogo({ address, symbol, header = false, size = '24px', ...rest }) {
-  console.log("symbolsymbol", symbol);
   const [error, setError] = useState(false)
   // const myList = generateMyTokenList();
   // console.log("TokenList", TokenList);
@@ -97,7 +96,6 @@ export default function TokenLogo({ address, symbol, header = false, size = '24p
   // const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address
   //   }/logo.png`
   let index = tokens.findIndex(x => x.symbol === symbol);
-  console.log("indexindex", index);
   return (
     <Inline>
       <Image
