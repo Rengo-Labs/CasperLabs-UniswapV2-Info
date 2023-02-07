@@ -205,9 +205,8 @@ function SideNav({ history }) {
         <MobileWrapper>
           <Title />
         </MobileWrapper>
-      )
-      }
-    </Wrapper >
+      )}
+    </Wrapper>
   )
 }
 

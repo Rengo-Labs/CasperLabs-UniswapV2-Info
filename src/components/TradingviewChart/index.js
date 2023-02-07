@@ -57,7 +57,7 @@ const TradingViewChart = ({
       value: parseFloat(entry[field]),
     }
   })
-  const formattedData = formattedData0.filter((v, i, a) => a.findIndex(v2 => (v2.time === v.time)) === i)
+  const formattedData = formattedData0.filter((v, i, a) => a.findIndex((v2) => v2.time === v.time) === i)
   // adjust the scale based on the type of chart
   const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2
 
@@ -128,23 +128,23 @@ const TradingViewChart = ({
       var series =
         type === CHART_TYPES.BAR
           ? chart.addHistogramSeries({
-            color: '#890b24',
-            priceFormat: {
-              type: 'volume',
-            },
-            scaleMargins: {
-              top: 0.32,
-              bottom: 0,
-            },
-            lineColor: '#890b24',
-            lineWidth: 3,
-          })
+              color: 'rgba(113,95,245,1)',
+              priceFormat: {
+                type: 'volume',
+              },
+              scaleMargins: {
+                top: 0.32,
+                bottom: 0,
+              },
+              lineColor: '#890b24',
+              lineWidth: 3,
+            })
           : chart.addAreaSeries({
-            topColor: '#890b24',
-            bottomColor: 'rgba(237, 11, 37, 0)',
-            lineColor: '#890b24',
-            lineWidth: 3,
-          })
+              topColor: '#890b24',
+              bottomColor: 'rgba(113,95,245,1)',
+              lineColor: 'rgba(113,95,245,1)',
+              lineWidth: 3,
+            })
 
       series.setData(formattedData)
       var toolTip = document.createElement('div')
@@ -165,7 +165,8 @@ const TradingViewChart = ({
       // get the title of the chart
       function setLastBarText() {
         toolTip.innerHTML =
-          `<div style="font-size: 16px; margin: 4px 0px; color: ${textColor};">${title} ${type === CHART_TYPES.BAR && !useWeekly ? '(24hr)' : ''
+          `<div style="font-size: 16px; margin: 4px 0px; color: ${textColor};">${title} ${
+            type === CHART_TYPES.BAR && !useWeekly ? '(24hr)' : ''
           }</div>` +
           `<div style="font-size: 22px; margin: 4px 0px; color:${textColor}" >` +
           formattedNum(base ?? 0, true) +
@@ -188,12 +189,12 @@ const TradingViewChart = ({
         } else {
           let dateStr = useWeekly
             ? dayjs(param.time.year + '-' + param.time.month + '-' + param.time.day)
-              .startOf('week')
-              .format('MMMM D, YYYY') +
-            '-' +
-            dayjs(param.time.year + '-' + param.time.month + '-' + param.time.day)
-              .endOf('week')
-              .format('MMMM D, YYYY')
+                .startOf('week')
+                .format('MMMM D, YYYY') +
+              '-' +
+              dayjs(param.time.year + '-' + param.time.month + '-' + param.time.day)
+                .endOf('week')
+                .format('MMMM D, YYYY')
             : dayjs(param.time.year + '-' + param.time.month + '-' + param.time.day).format('MMMM D, YYYY')
           var price = param.seriesPrices.get(series)
 
