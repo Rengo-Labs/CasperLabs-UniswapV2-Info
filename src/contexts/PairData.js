@@ -683,7 +683,7 @@ export function usePairChartData(pairAddress) {
 }
 
 /**
- * Get list of all pairs in Casper Swap
+ * Get list of all pairs in CasperSwap
  */
 export function useAllPairData() {
   const [state] = usePairDataContext()

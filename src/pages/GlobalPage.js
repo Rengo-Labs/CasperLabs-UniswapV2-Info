@@ -71,11 +71,11 @@ function GlobalPage() {
 
   return (
     <PageWrapper>
-      <ThemedBackground backgroundColor={transparentize(0.6, '#890b24')} />
+      <ThemedBackground backgroundColor={transparentize(0.6, '#715ff5')} />
       <ContentWrapper>
         <div>
           <AutoColumn gap="24px" style={{ paddingBottom: below800 ? '0' : '24px' }}>
-            <TYPE.largeHeader>{below800 ? 'Casper Swap Analytics' : 'Casper Swap Analytics'}</TYPE.largeHeader>
+            <TYPE.largeHeader>{below800 ? 'CasperSwap Analytics' : 'CasperSwap Analytics'}</TYPE.largeHeader>
             <Search />
             <GlobalStats />
           </AutoColumn>

@@ -52,9 +52,9 @@ const Wrapper = styled.div`
   @media screen and (max-width: 500px) {
     background: ${({ theme }) => theme.bg6};
     box-shadow: ${({ open }) =>
-    !open
-      ? '0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04) '
-      : 'none'};
+      !open
+        ? '0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04) '
+        : 'none'};
   }
 `
 const Input = styled.input`
@@ -208,7 +208,9 @@ export const Search = ({ small = false }) => {
               .concat(updateNameData(pairs.data.as1))
               .concat(updateNameData(pairs.data.asAddress))
           )
-          const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress != null ? tokens.data.asAddress : []).concat(tokens.data.asName)
+          const foundTokens = tokens.data.asSymbol
+            .concat(tokens.data.asAddress != null ? tokens.data.asAddress : [])
+            .concat(tokens.data.asName)
           // console.log("foundTokens", foundTokens);
           setSearchedTokens(foundTokens)
         }
@@ -276,100 +278,100 @@ export const Search = ({ small = false }) => {
   const filteredTokenList = useMemo(() => {
     return uniqueTokens
       ? uniqueTokens
-        .sort((a, b) => {
-          const tokenA = allTokenData[a.id]
-          const tokenB = allTokenData[b.id]
-          if (tokenA?.oneDayVolumeUSD && tokenB?.oneDayVolumeUSD) {
-            return tokenA.oneDayVolumeUSD > tokenB.oneDayVolumeUSD ? -1 : 1
-          }
-          if (tokenA?.oneDayVolumeUSD && !tokenB?.oneDayVolumeUSD) {
-            return -1
-          }
-          if (!tokenA?.oneDayVolumeUSD && tokenB?.oneDayVolumeUSD) {
-            return tokenA?.totalLiquidity > tokenB?.totalLiquidity ? -1 : 1
-          }
-          return 1
-        })
-        .filter((token) => {
-          if (TOKEN_BLACKLIST.includes(token.id)) {
-            return false
-          }
-          const regexMatches = Object.keys(token).map((tokenEntryKey) => {
-            const isAddress = value.slice(0, 2) === '0x'
-            if (tokenEntryKey === 'id' && isAddress) {
-              return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+          .sort((a, b) => {
+            const tokenA = allTokenData[a.id]
+            const tokenB = allTokenData[b.id]
+            if (tokenA?.oneDayVolumeUSD && tokenB?.oneDayVolumeUSD) {
+              return tokenA.oneDayVolumeUSD > tokenB.oneDayVolumeUSD ? -1 : 1
             }
-            if (tokenEntryKey === 'symbol' && !isAddress) {
-              return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+            if (tokenA?.oneDayVolumeUSD && !tokenB?.oneDayVolumeUSD) {
+              return -1
             }
-            if (tokenEntryKey === 'name' && !isAddress) {
-              return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+            if (!tokenA?.oneDayVolumeUSD && tokenB?.oneDayVolumeUSD) {
+              return tokenA?.totalLiquidity > tokenB?.totalLiquidity ? -1 : 1
             }
-            return false
+            return 1
           })
-          return regexMatches.some((m) => m)
-        })
+          .filter((token) => {
+            if (TOKEN_BLACKLIST.includes(token.id)) {
+              return false
+            }
+            const regexMatches = Object.keys(token).map((tokenEntryKey) => {
+              const isAddress = value.slice(0, 2) === '0x'
+              if (tokenEntryKey === 'id' && isAddress) {
+                return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+              }
+              if (tokenEntryKey === 'symbol' && !isAddress) {
+                return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+              }
+              if (tokenEntryKey === 'name' && !isAddress) {
+                return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
+              }
+              return false
+            })
+            return regexMatches.some((m) => m)
+          })
       : []
   }, [allTokenData, uniqueTokens, value])
 
   const filteredPairList = useMemo(() => {
     return uniquePairs
       ? uniquePairs
-        .sort((a, b) => {
-          const pairA = allPairData[a.id]
-          const pairB = allPairData[b.id]
-          if (pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
-            return parseFloat(pairA.trackedReserveETH) > parseFloat(pairB.trackedReserveETH) ? -1 : 1
-          }
-          if (pairA?.trackedReserveETH && !pairB?.trackedReserveETH) {
-            return -1
-          }
-          if (!pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
-            return 1
-          }
-          return 0
-        })
-        .filter((pair) => {
-          if (PAIR_BLACKLIST.includes(pair.id)) {
-            return false
-          }
-          if (value && value.includes(' ')) {
-            const pairA = value.split(' ')[0]?.toUpperCase()
-            const pairB = value.split(' ')[1]?.toUpperCase()
-            return (
-              (pair.token0.symbol.includes(pairA) || pair.token0.symbol.includes(pairB)) &&
-              (pair.token1.symbol.includes(pairA) || pair.token1.symbol.includes(pairB))
-            )
-          }
-          if (value && value.includes('-')) {
-            const pairA = value.split('-')[0]?.toUpperCase()
-            const pairB = value.split('-')[1]?.toUpperCase()
-            return (
-              (pair.token0.symbol.includes(pairA) || pair.token0.symbol.includes(pairB)) &&
-              (pair.token1.symbol.includes(pairA) || pair.token1.symbol.includes(pairB))
-            )
-          }
-          const regexMatches = Object.keys(pair).map((field) => {
-            const isAddress = value.slice(0, 2) === '0x'
-            if (field === 'id' && isAddress) {
-              return pair[field].match(new RegExp(escapeRegExp(value), 'i'))
+          .sort((a, b) => {
+            const pairA = allPairData[a.id]
+            const pairB = allPairData[b.id]
+            if (pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
+              return parseFloat(pairA.trackedReserveETH) > parseFloat(pairB.trackedReserveETH) ? -1 : 1
             }
-            if (field === 'token0') {
-              return (
-                pair[field].symbol.match(new RegExp(escapeRegExp(value), 'i')) ||
-                pair[field].name.match(new RegExp(escapeRegExp(value), 'i'))
-              )
+            if (pairA?.trackedReserveETH && !pairB?.trackedReserveETH) {
+              return -1
             }
-            if (field === 'token1') {
-              return (
-                pair[field].symbol.match(new RegExp(escapeRegExp(value), 'i')) ||
-                pair[field].name.match(new RegExp(escapeRegExp(value), 'i'))
-              )
+            if (!pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
+              return 1
             }
-            return false
+            return 0
           })
-          return regexMatches.some((m) => m)
-        })
+          .filter((pair) => {
+            if (PAIR_BLACKLIST.includes(pair.id)) {
+              return false
+            }
+            if (value && value.includes(' ')) {
+              const pairA = value.split(' ')[0]?.toUpperCase()
+              const pairB = value.split(' ')[1]?.toUpperCase()
+              return (
+                (pair.token0.symbol.includes(pairA) || pair.token0.symbol.includes(pairB)) &&
+                (pair.token1.symbol.includes(pairA) || pair.token1.symbol.includes(pairB))
+              )
+            }
+            if (value && value.includes('-')) {
+              const pairA = value.split('-')[0]?.toUpperCase()
+              const pairB = value.split('-')[1]?.toUpperCase()
+              return (
+                (pair.token0.symbol.includes(pairA) || pair.token0.symbol.includes(pairB)) &&
+                (pair.token1.symbol.includes(pairA) || pair.token1.symbol.includes(pairB))
+              )
+            }
+            const regexMatches = Object.keys(pair).map((field) => {
+              const isAddress = value.slice(0, 2) === '0x'
+              if (field === 'id' && isAddress) {
+                return pair[field].match(new RegExp(escapeRegExp(value), 'i'))
+              }
+              if (field === 'token0') {
+                return (
+                  pair[field].symbol.match(new RegExp(escapeRegExp(value), 'i')) ||
+                  pair[field].name.match(new RegExp(escapeRegExp(value), 'i'))
+                )
+              }
+              if (field === 'token1') {
+                return (
+                  pair[field].symbol.match(new RegExp(escapeRegExp(value), 'i')) ||
+                  pair[field].name.match(new RegExp(escapeRegExp(value), 'i'))
+                )
+              }
+              return false
+            })
+            return regexMatches.some((m) => m)
+          })
       : []
   }, [allPairData, uniquePairs, value])
 
@@ -432,12 +434,12 @@ export const Search = ({ small = false }) => {
             small
               ? ''
               : below410
-                ? 'Search...'
-                : below470
-                  ? 'Search Casper Swap...'
-                  : below700
-                    ? 'Search pairs and tokens...'
-                    : 'Search Casper Swap pairs and tokens...'
+              ? 'Search...'
+              : below470
+              ? 'Search CasperSwap...'
+              : below700
+              ? 'Search pairs and tokens...'
+              : 'Search CasperSwap pairs and tokens...'
           }
           value={value}
           onChange={(e) => {
@@ -468,7 +470,13 @@ export const Search = ({ small = false }) => {
               return (
                 <BasicLink to={'/pair/' + pair.id} key={pair.id} onClick={onDismiss}>
                   <MenuItem>
-                    <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} s0={pair?.token0?.symbol} s1={pair?.token1?.symbol} margin={true} />
+                    <DoubleTokenLogo
+                      a0={pair?.token0?.id}
+                      a1={pair?.token1?.id}
+                      s0={pair?.token0?.symbol}
+                      s1={pair?.token1?.symbol}
+                      margin={true}
+                    />
                     <TYPE.body style={{ marginLeft: '10px' }}>
                       {pair.token0.symbol + '-' + pair.token1.symbol} Pair
                     </TYPE.body>
