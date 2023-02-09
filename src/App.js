@@ -99,9 +99,9 @@ function App() {
   const [savedOpen, setSavedOpen] = useState(false)
 
   const globalData = useGlobalData()
-  console.log("globalData", globalData);
+  console.log('globalData', globalData)
   const globalChartData = useGlobalChartData()
-  console.log("globalChartData", globalChartData);
+  console.log('globalChartData', globalChartData)
   const [latestBlock, headBlock] = useLatestBlocks()
 
   // show warning
@@ -118,9 +118,9 @@ function App() {
           </WarningWrapper>
         )} */}
         {globalData &&
-          Object.keys(globalData).length > 0 &&
-          globalChartData &&
-          Object.keys(globalChartData).length > 0 ? (
+        Object.keys(globalData).length > 0 &&
+        globalChartData &&
+        Object.keys(globalChartData).length > 0 ? (
           <BrowserRouter>
             <Route component={GoogleAnalyticsReporter} />
             <Switch>
@@ -135,7 +135,6 @@ function App() {
                     !Object.keys(TOKEN_BLACKLIST).includes(match.params.tokenAddress.toLowerCase())
                   ) {
                     return (
-
                       <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                         {/* {console.log("match.params.tokenAddress.toLowerCase()", match.params.tokenAddress.toLowerCase())} */}
                         <TokenPage address={match.params.tokenAddress.toLowerCase()} />

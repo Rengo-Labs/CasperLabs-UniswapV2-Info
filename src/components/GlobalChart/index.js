@@ -30,12 +30,12 @@ const GlobalChart = ({ display }) => {
   // global historical data
   const [dailyData, weeklyData] = useGlobalChartData()
   for (let i = 0; i < dailyData.length; i++) {
-    dailyData[i].totalLiquidityUSDValue = dailyData[i].totalLiquidityUSD / 10 ** 9;
+    dailyData[i].totalLiquidityUSDValue = dailyData[i].totalLiquidityUSD / 10 ** 9
   }
   const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD, oneWeekVolume, weeklyVolumeChange } =
     useGlobalData()
-  console.log("dailyData", dailyData);
-  console.log("totalLiquidityUSD", totalLiquidityUSD);
+  console.log('dailyData', dailyData)
+  console.log('totalLiquidityUSD', totalLiquidityUSD)
 
   // based on window, get starttim
   let utcStartTime = getTimeframe(timeWindow)

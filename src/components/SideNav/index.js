@@ -165,7 +165,7 @@ function SideNav({ history }) {
           <AutoColumn gap="0.5rem" style={{ marginLeft: '.75rem', marginBottom: '4rem' }}>
             <HeaderText>
               <Link href="https://app.casperswap.xyz/" target="_blank">
-                Casper Swap
+                CasperSwap
               </Link>
             </HeaderText>
             {/* <HeaderText>
@@ -205,9 +205,8 @@ function SideNav({ history }) {
         <MobileWrapper>
           <Title />
         </MobileWrapper>
-      )
-      }
-    </Wrapper >
+      )}
+    </Wrapper>
   )
 }
 
