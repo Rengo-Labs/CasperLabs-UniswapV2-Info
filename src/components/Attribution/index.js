@@ -7,7 +7,7 @@ const Attribution = () => (
     </a>{' '}
     |{' '}
     <a href="https://app.casperswap.xyz" rel="noopener noreferrer" target="_blank">
-      Casper Swap
+      CasperSwap
     </a>{' '}
     |{' '}
     <a href="https://gifer.com/en/1Atv" rel="noopener noreferrer" target="_blank">
