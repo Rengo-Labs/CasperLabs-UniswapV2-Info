@@ -40,35 +40,39 @@ export function getTimeframe(timeWindow) {
   return utcStartTime
 }
 
+// export function getPoolLink(token0Address, token1Address = null, remove = false) {
+//   if (!token1Address) {
+//     return (
+//       `https://app.casperswap.xyz/` +
+//       (remove
+//         ? `pool/removeLiquidity${token0Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
+//           ? token0Address
+//           : token0Address
+//         }/${'CSPR'}`
+//         : `pool/addLiquidity`)
+//     )
+//   } else {
+//     return (
+//       `https://app.casperswap.xyz/` +
+//       (remove
+//         ? `pool/removeLiquidity/${token0Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
+//           ? token0Address
+//           : token0Address
+//         }/${token1Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
+//           ? token1Address
+//           : token1Address
+//         }`
+//         : `pool/addLiquidity`)
+//     )
+//   }
+// }
+
 export function getPoolLink(token0Address, token1Address = null, remove = false) {
-  if (!token1Address) {
-    return (
-      `https://app.casperswap.xyz/` +
-      (remove
-        ? `pool/removeLiquidity${token0Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
-          ? token0Address
-          : token0Address
-        }/${'CSPR'}`
-        : `pool/addLiquidity`)
-    )
-  } else {
-    return (
-      `https://app.casperswap.xyz/` +
-      (remove
-        ? `pool/removeLiquidity/${token0Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
-          ? token0Address
-          : token0Address
-        }/${token1Address === '0885c63f5f25ec5b6f3b57338fae5849aea5f1a2c96fc61411f2bfc5e432de5a'
-          ? token1Address
-          : token1Address
-        }`
-        : `pool/addLiquidity`)
-    )
-  }
+  return 'https://testnet.casperswap.xyz/liquidity'
 }
 
 export function getSwapLink(token0Address, token1Address = null) {
-  return `https://app.casperswap.xyz/swap`
+  return `https://testnet.casperswap.xyz/swap`
 }
 
 export function getMiningPoolLink(token0Address) {
