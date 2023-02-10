@@ -123,7 +123,8 @@ function TokenPage({ address, history }) {
   // console.log("oneDayTxns", oneDayTxns);
 
   // detect color from token
-  const backgroundColor = useColor(id, symbol)
+  //const backgroundColor = useColor(id, symbol)
+  const backgroundColor = '#715ff5'
 
   const allPairs = useTokenPairs(address)
 
@@ -181,9 +182,10 @@ function TokenPage({ address, history }) {
             <TYPE.light style={{ textAlign: 'center' }}>
               {BLOCKED_WARNINGS[address] ?? `This token is not supported.`}
             </TYPE.light>
-            <Link external={true} href={'https://testnet.cspr.live/contract-package/' + address}>{`More about ${shortenAddress(
-              address
-            )}`}</Link>
+            <Link
+              external={true}
+              href={'https://testnet.cspr.live/contract-package/' + address}
+            >{`More about ${shortenAddress(address)}`}</Link>
           </AutoColumn>
         </BlockedMessageWrapper>
       </BlockedWrapper>
@@ -218,7 +220,7 @@ function TokenPage({ address, history }) {
           </AutoRow>
           {!below600 && <Search small={true} />}
         </RowBetween>
-        <WarningGrouping >
+        <WarningGrouping>
           <DashboardWrapper style={{ marginTop: below1080 ? '0' : '1rem' }}>
             <RowBetween
               style={{
@@ -377,7 +379,7 @@ function TokenPage({ address, history }) {
               }}
             >
               {address && fetchedPairsList ? (
-                <PairList color={backgroundColor} address={address} pairs={fetchedPairsList} useTracked={useTracked} />
+                <PairList address={address} pairs={fetchedPairsList} useTracked={useTracked} />
               ) : (
                 <Loader />
               )}
@@ -385,9 +387,7 @@ function TokenPage({ address, history }) {
             <RowBetween mt={40} mb={'1rem'}>
               <TYPE.main fontSize={'1.125rem'}>Transactions</TYPE.main> <div />
             </RowBetween>
-            <Panel rounded>
-              {transactions ? <TxnList color={backgroundColor} transactions={transactions} /> : <Loader />}
-            </Panel>
+            <Panel rounded>{transactions ? <TxnList transactions={transactions} /> : <Loader />}</Panel>
             <>
               <RowBetween style={{ marginTop: '3rem' }}>
                 <TYPE.main fontSize={'1.125rem'}>Token Information</TYPE.main>{' '}
@@ -421,8 +421,12 @@ function TokenPage({ address, history }) {
                       <CopyHelper toCopy={address} />
                     </AutoRow>
                   </Column>
-                  <ButtonLight color={backgroundColor}>
-                    <Link color={backgroundColor} external href={'https://testnet.cspr.live/contract-package/' + address}>
+                  <ButtonLight>
+                    <Link
+                      color={backgroundColor}
+                      external
+                      href={'https://testnet.cspr.live/contract-package/' + address}
+                    >
                       View on Casper Live ↗
                     </Link>
                   </ButtonLight>

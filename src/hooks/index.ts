@@ -6,7 +6,7 @@ import { isAddress } from '../utils'
 import copy from 'copy-to-clipboard'
 import CSPR from '../assets/cspr.png'
 export function useColor(tokenAddress, token) {
-  const [color, setColor] = useState('#2172E5')
+  const [color, setColor] = useState('blue')
   if (tokenAddress) {
     // const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${tokenAddress
     //   }/logo.png`
