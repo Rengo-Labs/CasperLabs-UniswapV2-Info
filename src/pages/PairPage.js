@@ -142,7 +142,8 @@ function PairPage({ pairAddress, history }) {
   }, [])
 
   const transactions = usePairTransactions(pairAddress)
-  const backgroundColor = useColor(pairAddress)
+  //const backgroundColor = useColor(pairAddress)
+  const backgroundColor = '#715ff5'
 
   const formattedLiquidity = reserveUSD
     ? formattedNum(reserveUSD / 10 ** 9, true)
@@ -249,7 +250,14 @@ function PairPage({ pairAddress, history }) {
                 <RowFixed style={{ flexWrap: 'wrap', minWidth: '100px' }}>
                   <RowFixed>
                     {token0 && token1 && (
-                      <DoubleTokenLogo a0={token0?.id || ''} a1={token1?.id || ''} s0={token0?.symbol || ''} s1={token1?.symbol || ''} size={32} margin={true} />
+                      <DoubleTokenLogo
+                        a0={token0?.id || ''}
+                        a1={token1?.id || ''}
+                        s0={token0?.symbol || ''}
+                        s1={token1?.symbol || ''}
+                        size={32}
+                        margin={true}
+                      />
                     )}{' '}
                     <TYPE.main fontSize={below1080 ? '1.5rem' : '2rem'} style={{ margin: '0 1rem' }}>
                       {token0 && token1 ? (
@@ -313,8 +321,9 @@ function PairPage({ pairAddress, history }) {
                   <TokenLogo address={token0?.id} symbol={token0?.symbol} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
                     {token0 && token1
-                      ? `1 ${formattedSymbol0} = ${token0Rate} ${formattedSymbol1} ${parseFloat(token0?.derivedETH) ? '(' + token0USD + ')' : ''
-                      }`
+                      ? `1 ${formattedSymbol0} = ${token0Rate} ${formattedSymbol1} ${
+                          parseFloat(token0?.derivedETH) ? '(' + token0USD + ')' : ''
+                        }`
                       : '-'}
                   </TYPE.main>
                 </RowFixed>
@@ -324,8 +333,9 @@ function PairPage({ pairAddress, history }) {
                   <TokenLogo address={token1?.id} symbol={token1?.symbol} size={'16px'} />
                   <TYPE.main fontSize={'16px'} lineHeight={1} fontWeight={500} ml={'4px'}>
                     {token0 && token1
-                      ? `1 ${formattedSymbol1} = ${token1Rate} ${formattedSymbol0}  ${parseFloat(token1?.derivedETH) ? '(' + token1USD + ')' : ''
-                      }`
+                      ? `1 ${formattedSymbol1} = ${token1Rate} ${formattedSymbol0}  ${
+                          parseFloat(token1?.derivedETH) ? '(' + token1USD + ')' : ''
+                        }`
                       : '-'}
                   </TYPE.main>
                 </RowFixed>
@@ -499,7 +509,7 @@ function PairPage({ pairAddress, history }) {
                       <CopyHelper toCopy={token1?.id} />
                     </AutoRow>
                   </Column>
-                  <ButtonLight color={backgroundColor}>
+                  <ButtonLight>
                     <Link
                       color={backgroundColor}
                       external
