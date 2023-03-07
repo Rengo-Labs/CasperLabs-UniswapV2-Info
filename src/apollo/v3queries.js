@@ -974,6 +974,5 @@ async function getData() {
     fetchPolicy: 'cache-first',
     variables: { date: currentDate.toString() },
   })
-  console.log('resresresresresresresresres', res)
 }
 getData()

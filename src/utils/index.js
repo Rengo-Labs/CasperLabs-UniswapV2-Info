@@ -160,8 +160,6 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
  * @param {Int} timestamp in seconds
  */
 export async function getBlockFromTimestamp(timestamp) {
-  // console.log("timestamptimestamp", timestamp);
-  // console.log("new Date(timestamp)new Date(timestamp)", new Date(timestamp * 1000).toISOString());
   let timestampFrom = new Date(timestamp * 1000).toISOString()
   let timestampTo = new Date((timestamp + 600) * 1000).toISOString()
 
@@ -170,7 +168,6 @@ export async function getBlockFromTimestamp(timestamp) {
     fetchPolicy: 'cache-first',
   })
 
-  console.log('resultresultresultresult', result)
   return result?.data?.getBlockBetweenTimestampsAsc?.number
 }
 
@@ -204,7 +201,6 @@ export async function getBlocksFromTimestamps(timestamps, skipCount = 500) {
       }
     }
   }
-  console.log('blocks', blocks)
   return blocks
 }
 
@@ -247,8 +243,6 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
   let blocks = await getBlocksFromTimestamps(timestamps)
 
   blocks = blocks.filter((block) => block.number && block.timestamp)
-
-  console.log('Share value blocks ', blocks)
   // console.log("blocks", blocks);
   // console.log("pairAddress", pairAddress);
   // get historical share values with time travel queries
@@ -258,7 +252,6 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
     query: SHARE_VALUE(pairAddress, blocks),
     fetchPolicy: 'cache-first',
   })
-  console.log('SHARE_VALUE', result)
 
   let values = []
 
@@ -266,8 +259,6 @@ export async function getShareValueOverTime(pairAddress, timestamps) {
     let timestamp = row.split('t')[1]
     let sharePriceUsd = parseFloat(result.data[row][0]?.reserveUSD) / parseFloat(result.data[row][0]?.totalSupply)
     if (timestamp) {
-      console.log('data row is ', result.data[row][0])
-      console.log('data row has token 0 ', result.data[row][0].token0)
       values.push({
         timestamp,
         sharePriceUsd,
